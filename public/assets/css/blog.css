@@ -1,0 +1,168 @@
+        /* Estilos generales */
+        :root {
+            --primary-bg: #F7F7F7;
+            --accent-green: #2E8B57;
+            --accent-mustard: #FFD700;
+            --accent-brown: #8B4513;
+            --text-primary: #333333;
+            --text-secondary: #666666;
+            --texture-bg: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" opacity="0.03"><rect width="100" height="100" fill="%23000"/><path d="M0 0L100 100" stroke="%23000" stroke-width="1"/><path d="M100 0L0 100" stroke="%23000" stroke-width="1"/></svg>');
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            background-image: var(--texture-bg);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            color: var(--accent-brown);
+            font-weight: 600;
+        }
+
+        /* Barra de navegación */
+        .custom-navbar {
+            background-color: var(--primary-bg);
+            padding: 0.8rem 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+
+        .navbar-brand h2 {
+            color: var(--accent-brown);
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .navbar-nav .nav-link {
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin: 0 0.5rem;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .navbar-nav .nav-link:hover,
+        .navbar-nav .nav-link.active {
+            color: var(--accent-green);
+        }
+
+        .navbar-nav .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-green);
+        }
+
+        /* Estilos para la sección de noticias */
+        .news-section {
+            padding: 4rem 0;
+        }
+
+        .news-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            padding-bottom: 1rem;
+            font-size: 2.2rem;
+        }
+
+        .news-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background-color: var(--accent-green);
+        }
+
+        .curious-case {
+            display: flex;
+            background-color: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .curious-case:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.15);
+        }
+
+        .case-content {
+            padding: 2rem;
+            flex: 1;
+        }
+
+        .case-content h3 {
+            color: var(--accent-green);
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .case-content p {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .btn-case {
+            display: inline-block;
+            background-color: var(--accent-green);
+            color: white;
+            padding: 0.6rem 1.5rem;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-case:hover {
+            background-color: #267445;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(46, 139, 87, 0.3);
+            color: white;
+        }
+
+        .case-image-placeholder {
+            flex: 1;
+            min-height: 250px;
+            background-color: #f0f0f0;
+            background-size: cover;
+            background-position: center;
+        }
+
+        /* Para el primer caso */
+        .case-image-placeholder-1 {
+            background-image: url('https://images.unsplash.com/photo-1561136594-7f68413baa99?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80');
+        }
+
+        /* Para el segundo caso */
+        .case-image-placeholder-2 {
+            background-image: url('https://phantom-elmundo.unidadeditorial.es/90f04ac2a6345aeca8a0b7322c3bc6e3/crop/255x51/1746x1046/resize/473/f/webp/assets/multimedia/imagenes/2020/10/13/16026039626695.jpg');
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .curious-case {
+                flex-direction: column;
+            }
+            
+            .case-image-placeholder {
+                min-height: 200px;
+                order: -1;
+            }
+            
+            .news-title {
+                font-size: 1.8rem;
+            }
+        }

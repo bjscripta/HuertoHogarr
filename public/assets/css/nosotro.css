@@ -1,0 +1,195 @@
+/* Sección de ubicaciones */
+.locations-section {
+    padding: 4rem 0;
+    background: linear-gradient(135deg, rgba(46, 139, 87, 0.05) 0%, rgba(139, 69, 19, 0.05) 100%);
+}
+
+.locations-section .section-title {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.locations-section .section-title h2 {
+    color: var(--accent-brown);
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.locations-section .section-title p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Contenedor del mapa */
+.map-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+    border: 2px solid var(--accent-green);
+}
+
+#stores-map {
+    height: 500px;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* Lista de tiendas */
+.stores-list {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    height: 100%;
+}
+
+.stores-list h3 {
+    color: var(--accent-brown);
+    margin-bottom: 1.5rem;
+    font-family: 'Playfair Display', serif;
+    border-bottom: 2px solid var(--accent-green);
+    padding-bottom: 0.5rem;
+}
+
+.cities-list {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 2rem;
+}
+
+.cities-list li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    font-weight: 500;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+}
+
+.cities-list li:last-child {
+    border-bottom: none;
+}
+
+.cities-list li i {
+    color: var(--accent-green);
+    margin-right: 0.75rem;
+    font-size: 1.1rem;
+}
+
+.cities-list li:hover {
+    color: var(--accent-green);
+    transform: translateX(5px);
+    transition: all 0.3s ease;
+}
+
+.store-info {
+    background: linear-gradient(135deg, rgba(46, 139, 87, 0.1) 0%, rgba(46, 139, 87, 0.05) 100%);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid var(--accent-green);
+}
+
+.store-info h4 {
+    color: var(--accent-brown);
+    margin-bottom: 1rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.store-info p {
+    margin: 0.5rem 0;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+}
+
+.store-info i {
+    color: var(--accent-green);
+    margin-right: 0.5rem;
+    width: 20px;
+}
+
+/* Estilos para los marcadores del mapa */
+.custom-marker {
+    background: var(--accent-green);
+    border: 3px solid white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Popup personalizado */
+.leaflet-popup-content {
+    font-family: 'Montserrat', sans-serif;
+}
+
+.leaflet-popup-content-wrapper {
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.store-popup h4 {
+    color: var(--accent-brown);
+    margin-bottom: 0.5rem;
+    font-family: 'Playfair Display', serif;
+}
+
+.store-popup p {
+    margin: 0.25rem 0;
+    color: var(--text-primary);
+}
+
+.store-popup .store-address {
+    color: var(--accent-green);
+    font-weight: 500;
+}
+
+/* Responsive */
+@media (max-width: 992px) {
+    #stores-map {
+        height: 400px;
+    }
+    
+    .stores-list {
+        margin-top: 2rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .locations-section {
+        padding: 3rem 0;
+    }
+    
+    .locations-section .section-title h2 {
+        font-size: 2rem;
+    }
+    
+    .map-container {
+        padding: 1rem;
+    }
+    
+    #stores-map {
+        height: 350px;
+    }
+    
+    .stores-list {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    #stores-map {
+        height: 300px;
+    }
+    
+    .cities-list li {
+        font-size: 0.95rem;
+    }
+    
+    .store-info {
+        padding: 1rem;
+    }
+}

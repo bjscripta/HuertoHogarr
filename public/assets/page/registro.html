@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - HuertoHogar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/registro.css">
+</head>
+<body>
+    <!-- Barra de navegación -->
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="../../home.html">
+                <h2>HuertoHogar</h2>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="../../home.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../page/producto.html">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../page/nosotro.html">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../page/blog.html">Blogs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../page/contacto.html">Contacto</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+     <div class="registration-container">
+        <div class="container">
+            <div class="registration-form">
+                <div class="registration-header">
+                    <h1>Crear Cuenta</h1>
+                    <p>Únete a la comunidad de HuertoHogar</p>
+                </div>
+                
+                <form id="formRegistro">
+                    <!-- RUN y Fecha de Nacimiento -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="run" class="form-label">RUN</label>
+                            <input type="text" class="form-control" id="run" placeholder="12345678-9" required>
+                            <div class="form-text">Ingresa tu RUN sin puntos y con guión</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="fechaNacimiento" class="form-label">Fecha de Nacimiento <span class="optional-badge">Opcional</span></label>
+                            <input type="date" class="form-control" id="fechaNacimiento">
+                        </div>
+                    </div>
+                    
+                    <!-- Nombre y Apellido -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="nombre" class="form-label">Nombre</label>
+                            <input type="text" class="form-control" id="nombre" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="apellido" class="form-label">Apellido</label>
+                            <input type="text" class="form-control" id="apellido" required>
+                        </div>
+                    </div>
+                    
+                    <!-- Correo y Teléfono -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="correo" class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" id="correo" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="telefono" class="form-label">Teléfono <span class="optional-badge">Opcional</span></label>
+                            <input type="tel" class="form-control" id="telefono" placeholder="+56 9 1234 5678">
+                        </div>
+                    </div>
+                    
+                    <!-- Contraseñas -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="contrasena" class="form-label">Contraseña</label>
+                            <input type="password" class="form-control" id="contrasena" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="confirmarContrasena" class="form-label">Confirmar Contraseña</label>
+                            <input type="password" class="form-control" id="confirmarContrasena" required>
+                            <div id="passwordMatchMessage" class="password-match"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dirección -->
+                    <div class="row">
+                        <div class="col-12 mb-3">
+                            <label for="direccion" class="form-label">Dirección</label>
+                            <input type="text" class="form-control" id="direccion" placeholder="Calle, número, departamento, etc." required>
+                        </div>
+                    </div>
+                    
+                    <!-- Región y Comuna -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="region" class="form-label">Región</label>
+                            <select class="form-select" id="region" required>
+                                <option value="" selected disabled>Selecciona una región</option>
+                                <option value="arica">Arica y Parinacota</option>
+                                <option value="tarapaca">Tarapacá</option>
+                                <option value="antofagasta">Antofagasta</option>
+                                <option value="atacama">Atacama</option>
+                                <option value="coquimbo">Coquimbo</option>
+                                <option value="valparaiso">Valparaíso</option>
+                                <option value="metropolitana">Metropolitana de Santiago</option>
+                                <option value="ohiggins">Libertador General Bernardo O'Higgins</option>
+                                <option value="maule">Maule</option>
+                                <option value="nuble">Ñuble</option>
+                                <option value="biobio">Biobío</option>
+                                <option value="araucania">La Araucanía</option>
+                                <option value="losrios">Los Ríos</option>
+                                <option value="loslagos">Los Lagos</option>
+                                <option value="aysen">Aysén del General Carlos Ibáñez del Campo</option>
+                                <option value="magallanes">Magallanes y de la Antártica Chilena</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="comuna" class="form-label">Comuna</label>
+                            <select class="form-select" id="comuna" required disabled>
+                                <option value="" selected disabled>Primero selecciona una región</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-register">Crear Cuenta</button>
+                    
+                    <div class="text-center mt-3">
+                        <p>¿Ya tienes una cuenta? <a href="../page/login.html" class="text-success">Inicia sesión aquí</a></p>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+        <script src="../js/registro.js"></script>
+</body>
+</html>
+</body>
+</html>

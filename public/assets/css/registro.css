@@ -1,0 +1,169 @@
+/* Estilos específicos para Formulario de Registro */
+.registration-container {
+    padding: 3rem 0;
+    background: linear-gradient(135deg, rgba(46, 139, 87, 0.1) 0%, rgba(139, 69, 19, 0.1) 100%);
+    min-height: calc(100vh - 200px);
+}
+
+.registration-form {
+    background-color: white;
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    max-width: 800px;
+    margin: 0 auto;
+    border-top: 4px solid var(--accent-green);
+}
+
+.registration-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.registration-header h1 {
+    color: var(--accent-brown);
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.registration-header p {
+    color: var(--text-secondary);
+    margin-bottom: 0;
+}
+
+.registration-form .form-label {
+    font-weight: 600;
+    color: var(--accent-brown);
+    margin-bottom: 0.5rem;
+}
+
+.registration-form .form-control,
+.registration-form .form-select {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e9ecef;
+    border-radius: 8px;
+    transition: all 0.3s;
+}
+
+.registration-form .form-control:focus,
+.registration-form .form-select:focus {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 0 0.2rem rgba(46, 139, 87, 0.25);
+}
+
+.btn-register {
+    background-color: var(--accent-green);
+    border-color: var(--accent-green);
+    color: white;
+    padding: 0.75rem;
+    font-weight: 600;
+    border-radius: 8px;
+    width: 100%;
+    transition: all 0.3s;
+    margin-top: 1rem;
+}
+
+.btn-register:hover {
+    background-color: #267445;
+    border-color: #267445;
+    transform: translateY(-2px);
+}
+
+.optional-badge {
+    background-color: var(--accent-mustard);
+    color: #333;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    margin-left: 0.5rem;
+    font-weight: 600;
+}
+
+.password-match {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.password-match.valid {
+    color: var(--accent-green);
+}
+
+.password-match.invalid {
+    color: #dc3545;
+}
+
+.registration-footer {
+    text-align: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.registration-footer a {
+    color: var(--accent-green);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.registration-footer a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive para formulario de registro */
+@media (max-width: 768px) {
+    .registration-form {
+        padding: 2rem 1.5rem;
+        margin: 0 1rem;
+    }
+    
+    .registration-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .registration-form .row {
+        margin-left: -0.5rem;
+        margin-right: -0.5rem;
+    }
+    
+    .registration-form .col-md-6,
+    .registration-form .col-md-12 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .registration-form {
+        padding: 1.5rem 1rem;
+    }
+    
+    .registration-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .registration-form .form-control,
+    .registration-form .form-select {
+        padding: 0.625rem 0.75rem;
+    }
+}
+
+.password-match {
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+}
+
+.password-match.success {
+    color: #198754;
+}
+
+.password-match.error {
+    color: #dc3545;
+}
+
+.form-control:invalid {
+    border-color: #dc3545;
+}
+
+.form-control:valid {
+    border-color: #198754;
+}

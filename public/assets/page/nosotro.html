@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nosotros - HuertoHogar</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="../css/home.css">
+    <link rel="stylesheet" href="../css/nosotro.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg custom-navbar">
+        <div class="container">
+            <a class="navbar-brand" href="../../home.html">
+                <h2>HuertoHogar</h2>
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="../../home.html">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../page/producto.html">Productos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../page/blog.html">Blogs</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="../page/contacto.html">Contacto</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <h1>Nuestra Misión</h1>
+                    <p class="lead">
+                        <b>HuertoHogar</b> Nuestra <b>misión</b> es proporcionar productos frescos y de calidad directamente desde el campo hasta
+                        la puerta de nuestros clientes, garantizando la frescura y el sabor en cada entrega. Nos
+                        comprometemos a fomentar una conexión más cercana entre los consumidores y los agricultores
+                        locales, apoyando prácticas agrícolas sostenibles y promoviendo una alimentación saludable en
+                        todos los hogares chilenos
+                    </p>
+                    <h1>Nuestra Visión</h1>
+                    <p class="lead">
+                        <b>HuertoHogar</b> Nuestra <b>visión</b> es ser la tienda online líder en la distribución de productos frescos y naturales en
+                        Chile, reconocida por nuestra calidad excepcional, servicio al cliente y compromiso con la
+                        sostenibilidad. Aspiramos a expandir nuestra presencia a nivel nacional e internacional,
+                        estableciendo un nuevo estándar en la distribución de productos agrícolas directos del productor al
+                        consumidor.
+                    </p>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="../../assets/img/huerto.png" alt="Foto HuertoHogar" class="img-fluid hero-image">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Nueva sección de ubicaciones  - HIZO CON DEEPSEEK-->
+    <section class="locations-section">
+        <div class="container">
+            <div class="section-title">
+                <h2>Nuestras Tiendas</h2>
+                <p>Encuentra nuestras tiendas físicas en estas ciudades</p>
+            </div>
+            
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="map-container">
+                        <div id="stores-map"></div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="stores-list">
+                        <h3>Ciudades con tiendas HuertoHogar</h3>
+                        <ul class="cities-list">
+                            <li><i class="bi bi-geo-alt-fill"></i> Santiago</li>
+                            <li><i class="bi bi-geo-alt-fill"></i> Puerto Montt</li>
+                            <li><i class="bi bi-geo-alt-fill"></i> Villarrica</li>
+                            <li><i class="bi bi-geo-alt-fill"></i> Nacimiento</li>
+                            <li><i class="bi bi-geo-alt-fill"></i> Viña del Mar</li>
+                            <li><i class="bi bi-geo-alt-fill"></i> Valparaíso</li>
+                            <li><i class="bi bi-geo-alt-fill"></i> Concepción</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="../js/nosotro.js"></script>
+</body>
+</html>
