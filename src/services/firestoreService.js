@@ -11,4 +11,6 @@ export async function getProduct(params){
     return snap.docs.map(d => ({id: d.id, ...d.data()}));
 }
 
-//COMMIT D EPRUEBA 
+
+
+
