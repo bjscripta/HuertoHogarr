@@ -215,41 +215,78 @@ function validarFormulario(event) {
 }
 
 // Inicializar eventos cuando el DOM esté cargado
-document.addEventListener('DOMContentLoaded', function() {
-    // Asignar evento al formulario
-    const formulario = document.getElementById('formRegistro');
-    if (formulario) {
-        formulario.addEventListener('submit', validarFormulario);
-    }
-    
-    // Asignar evento al select de región
-    const regionSelect = document.getElementById('region');
-    if (regionSelect) {
-        regionSelect.addEventListener('change', cargarComunas);
-    }
-    
-    // Asignar eventos a los campos de contraseña
-    const contrasenaInput = document.getElementById('contrasena');
-    const confirmarContrasenaInput = document.getElementById('confirmarContrasena');
-    
-    if (contrasenaInput && confirmarContrasenaInput) {
-        contrasenaInput.addEventListener('input', verificarCoincidenciaContrasenas);
-        confirmarContrasenaInput.addEventListener('input', verificarCoincidenciaContrasenas);
-    }
-    
-    // Formatear RUN mientras se escribe
-    const runInput = document.getElementById('run');
-    if (runInput) {
-        runInput.addEventListener('input', function(e) {
-            // Eliminar cualquier caracter que no sea número o K
-            let value = e.target.value.replace(/[^0-9Kk]/g, '').toUpperCase();
-            
-            // Insertar guión antes del último caracter si hay más de 1 caracter
-            if (value.length > 1) {
-                value = value.slice(0, -1) + '-' + value.slice(-1);
-            }
-            
-            e.target.value = value;
+document.addEventListener("formUsuario").addEventListener("submit", function(e) {
+    const runInput = document.getElementById("run");
+    const nombreInput = document.getElementById("nombre");
+    const correoInput = document.getElementById("correo");
+    const fechaInput = document.getElementById("fecha");
+    const mensaje = document.getElementById("mensaje");
+
+    //limpiar los input y mensajes flotante automaticamente
+    [runInput, nombreInput, correoInput, fechaInput].forEach(input => {
+        input.addEventListener("input", () => {
+            input.setCustomValidity("");
+            mensaje.innerText = "";
         });
-    }
+    });
+
+    document.getElementById("formUsuario").addEventListener("submit", function(e) {
+        e.preventDefault();
+    
+        //limpiar los mensajes
+        mensaje.innerText = "";
+    
+        //La validación correcta del run
+        runInput.value = runInput.value.trim().toUpperCase();
+    
+        //Guardar los valores de los otros input
+        const run = runInput.value;
+        const nombre = nombreInput.value.trim();
+        const correo = correoInput.value.trim();
+        const fecha = fechaInput.value;
+    
+        //Validación Run
+        if(!validarRun(run)) {
+            runInput.setCustomValidity("El RUN es incorrecto. Debe tener 8 dígitos + número o K verificador");
+            runInput.reportValidity();
+            return;
+        }
+    
+        //Validación Nombre
+        if (nombre === "") {
+            nombreInput.setCustomValidity("El nombres es obligatorio")
+            nombreInput.reportValidity();
+            return;
+        }
+    
+        //Validación correo
+        if (!validarCorreo(correo)) {
+            correoInput.setCustomValidity("El correo debe ser '@duoc.cl', '@profesor.duoc.cl' o '@gmail.com'");
+            correoInput.reportValidity();
+            return;
+        }
+    
+        //Validación de Edad
+        if (!esMayorEdad(fecha)) {
+            fechaInput.setCustomValidity("Debe seer mayor a 18 años para registrarse");
+            fechaInput.reportValidity();
+            return;
+        }
+    
+        //Todos los datos sean correctos
+        let nombreUsuario = nombre;
+        mensaje.innerText = `Formulario enviado correctamente` //alt gr + tecla }]`
+    
+        //Redirección a las paginas del perfil para el Admin o Cliente
+        //const destino = correo.toLowerCase() === "admin@duoc.cl" ?
+        //    `assets/page/perfilAdmin.html?nombre=${encodeURIComponent(nombreUsuario)}` :
+        //    `assets/page/perfilCliente.html?nombre=${encodeURIComponent(nombreUsuario)}`;
+    
+        //Tiempo de reacción al redirigir
+        //setTimeout(() => {
+          //  window.location.href = destino;
+        //}, 1000);
+        
+    
+    });
 });

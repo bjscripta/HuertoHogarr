@@ -1,17 +1,46 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import { addUser } from "./services/firestoreServide2";
+import { validarCorreo, validarRun} from "./utils/script";
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("formUsuario");
+  const runInput = document.getElementById("run");
+  const nombreInput = document.getElementById("nombre");
+  const correoInput = document.getElementById("correo");
+  const claveInput = document.getElementById("clave");
+  const fechaInput = document.getElementById("fecha");
+  const mensaje = document.getElementById("mensaje");
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();
+  if (!form) return console.log("No se encontro #formUsuario")
+  
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    mensaje.innerText = "";
+
+    const run = runInput.value.trim().toUpperCase();
+    const nombre = nombreInput.value.trim();
+    const correo = correoInput.value.trim();
+    const clave = claveInput.value;
+    const fecha = fechaInput.value;
+
+    if(!validarRun(run)) return mensaje.innerText = "Run incorrecto";
+    if(!nombre) return mensaje.innerText = "Nombre en blanco";
+    if(!validarCorreo(correo)) return mensaje.innerText = "Correo incorrecto"
+    if(!esMayorEdad(fecha)) return mensaje.innerText = "Debe ser mayor de 18 años"
+
+    try {
+      await addUser({ run, nombre, correo, clave, fecha});
+      mensaje.innerText = "Formulario se envio correctamente";
+
+      setTimeout(() => {
+        window.location.href = 
+          correo.toLowerCase() === "admin@duoc.cl"
+          ? `assets/page/perfAdmin.html?nombre=${encodeURIComponent(nombre)}`
+          : `assets/page/perfCliente.html?nombre=${encodeURIComponent(nombre)}`
+      }, 1000);
+    } catch(error) {
+      console.error("Error al guardar usuario: ", error);
+      mensaje.innerText = "Error al guardar usuario en Firebase"
+
+    }
+  });
+});
