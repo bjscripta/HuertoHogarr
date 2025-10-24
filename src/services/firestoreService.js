@@ -1,9 +1,19 @@
 import { wait } from "@testing-library/user-event/dist/utils";
 import  { db } from "../config/firebase";
-import { collection, addDoc, getDoc, query, where } from "firebase/firestore";
+import { collection, addDoc, getDoc, query, where, doc } from "firebase/firestore";
 
 export async function addUser(user){
-    return await addUser(collection(db, "usuario"), { ...user,createdAt: new Date()});
+    try {
+        const docRef = await addDoc(collection(db, "usuario"),{
+            ...user,
+            createdAt: new Date(),
+        })
+        console.log("Usuario registrado con ID: ",docRef.id)
+        return docRef;
+    } catch (error) {
+        console.error("Error al registrar usuario: ",error);
+        return error;
+    }
 }
 
 export async function getProduct(params){
