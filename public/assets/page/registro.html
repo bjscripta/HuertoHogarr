@@ -12,6 +12,22 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../css/home.css">
     <link rel="stylesheet" href="../css/registro.css">
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBQWpFadj7L-U-jF1b1DeEJqX-vDEmyiTA",
+            authDomain: "huertohogar-15d5.firebaseapp.com",
+            projectId: "huertohogar-15d5",
+            storageBucket: "huertohogar-15d5.appspot.com",
+            messagingSenderId: "663380007423",
+            appId: "1:663380007423:web:51638d3581e2453989efca",
+            measurementId: "G-6YRGN9FZLM"
+        };
+        
+        // Inicializar Firebase
+        firebase.initializeApp(firebaseConfig);
+    </script>
 </head>
 <body>
     <!-- Barra de navegación -->
@@ -153,7 +169,7 @@
         </div>
     </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-        <script src="../js/registro.js"></script>
+        <script type="module" src="../js/registro.js"></script>
 </body>
 </html>
 </body>

@@ -479,3 +479,133 @@
     font-size: 1.05rem;
 }
 
+/* Estilos para el header actualizado en producto */
+.search-container {
+    display: flex;
+    align-items: center;
+    background: white;
+    border-radius: 25px;
+    padding: 5px;
+    border: 2px solid #e9ecef;
+    margin-right: 1rem;
+}
+
+.search-input {
+    border: none;
+    outline: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    width: 250px;
+}
+
+.btn-buscar {
+    background: var(--accent-green);
+    border: none;
+    color: white;
+    padding: 8px 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-buscar:hover {
+    background: #267445;
+}
+
+/* Botones de autenticación */
+.auth-buttons {
+    display: flex;
+    gap: 10px;
+    margin-right: 1rem;
+}
+
+.btn-login, .btn-signup {
+    padding: 8px 16px;
+    border: 2px solid var(--accent-green);
+    background: transparent;
+    color: var(--accent-green);
+    border-radius: 20px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-size: 0.9rem;
+}
+
+.btn-login:hover, .btn-signup:hover {
+    background: var(--accent-green);
+    color: white;
+    transform: translateY(-2px);
+}
+
+/* Icono del carrito */
+.carrito-header .btn-carrito {
+    background: transparent;
+    border: 2px solid var(--accent-green);
+    color: var(--accent-green);
+    padding: 8px 15px;
+    border-radius: 25px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.carrito-header .btn-carrito:hover {
+    background: var(--accent-green);
+    color: white;
+    transform: translateY(-2px);
+}
+
+.carrito-icon {
+    position: relative;
+    font-size: 1.2rem;
+}
+
+.carrito-count {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    background: #dc3545;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+
+.carrito-text {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .search-container {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .search-input {
+        width: 100%;
+    }
+    
+    .auth-buttons {
+        flex-direction: column;
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .btn-login, .btn-signup {
+        width: 100%;
+        justify-content: center;
+    }
+}

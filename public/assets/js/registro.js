@@ -39,12 +39,24 @@ function validarCorreo(correo) {
     return dominiosPermitidos.some(dominio => correo.endsWith(dominio));
 }
 
-// Mapeo de regiones y comunas (ejemplo simplificado)
+// Función para validar edad (18+ años)
+function esMayorEdad(fechaNacimiento) {
+    const hoy = new Date();
+    const nacimiento = new Date(fechaNacimiento);
+    const edad = hoy.getFullYear() - nacimiento.getFullYear();
+    const mes = hoy.getMonth() - nacimiento.getMonth();
+    
+    if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+        return edad - 1 >= 18;
+    }
+    return edad >= 18;
+}
+
+// Mapeo de regiones y comunas
 const regionesComunas = {
     'arica': ['Arica', 'Camarones', 'Putre', 'General Lagos'],
     'tarapaca': ['Iquique', 'Alto Hospicio', 'Pozo Almonte', 'Camiña', 'Colchane', 'Huara', 'Pica'],
     'antofagasta': ['Antofagasta', 'Mejillones', 'Sierra Gorda', 'Taltal', 'Calama', 'Ollagüe', 'San Pedro de Atacama', 'Tocopilla', 'María Elena'],
-    // ... agregar más regiones y comunas según sea necesario
     'metropolitana': ['Santiago', 'Cerrillos', 'Cerro Navia', 'Conchalí', 'El Bosque', 'Estación Central', 'Huechuraba', 'Independencia', 'La Cisterna', 'La Florida', 'La Granja', 'La Pintana', 'La Reina', 'Las Condes', 'Lo Barnechea', 'Lo Espejo', 'Lo Prado', 'Macul', 'Maipú', 'Ñuñoa', 'Pedro Aguirre Cerda', 'Peñalolén', 'Providencia', 'Pudahuel', 'Quilicura', 'Quinta Normal', 'Recoleta', 'Renca', 'San Joaquín', 'San Miguel', 'San Ramón', 'Vitacura', 'Puente Alto', 'Pirque', 'San José de Maipo', 'Colina', 'Lampa', 'Tiltil', 'San Bernardo', 'Buin', 'Calera de Tango', 'Paine', 'Melipilla', 'Alhué', 'Curacaví', 'María Pinto', 'San Pedro', 'Talagante', 'El Monte', 'Isla de Maipo', 'Padre Hurtado', 'Peñaflor']
 };
 
@@ -113,180 +125,223 @@ function verificarCoincidenciaContrasenas() {
     return false;
 }
 
-// Función principal de validación del formulario
-function validarFormulario(event) {
-    event.preventDefault();
-    
-    // Obtener valores de los campos
-    const run = document.getElementById('run').value;
-    const nombre = document.getElementById('nombre').value;
-    const apellido = document.getElementById('apellido').value;
-    const correo = document.getElementById('correo').value;
-    const region = document.getElementById('region').value;
-    const comuna = document.getElementById('comuna').value;
-    const direccion = document.getElementById('direccion').value;
-    
-    // Validar RUN
-    if (!run) {
-        alert('El RUN es requerido');
+async function guardarUsuario(userData) {
+    try {
+        await firebase.firestore().collection("usuario").add({
+            ...userData,
+            createdAt: new Date()
+        });
+        console.log("Usuario guardado en Firebase");
+        return true;
+    } catch (error) {
+        console.error("Error al guardar:", error);
         return false;
     }
-    
-    if (run.length < 7 || run.length > 10) { // Incluye el guión
-        alert('El RUN debe tener entre 7 y 9 dígitos más el guión y dígito verificador');
-        return false;
-    }
-    
-    if (!validarRun(run)) {
-        alert('El RUN ingresado no es válido');
-        return false;
-    }
-    
-    // Validar nombre
-    if (!nombre) {
-        alert('El nombre es requerido');
-        return false;
-    }
-    
-    if (nombre.length > 50) {
-        alert('El nombre no puede exceder los 50 caracteres');
-        return false;
-    }
-    
-    // Validar apellido
-    if (!apellido) {
-        alert('El apellido es requerido');
-        return false;
-    }
-    
-    if (apellido.length > 100) {
-        alert('El apellido no puede exceder los 100 caracteres');
-        return false;
-    }
-    
-    // Validar correo
-    if (!correo) {
-        alert('El correo electrónico es requerido');
-        return false;
-    }
-    
-    if (correo.length > 100) {
-        alert('El correo electrónico no puede exceder los 100 caracteres');
-        return false;
-    }
-    
-    if (!validarCorreo(correo)) {
-        alert('Solo se permiten correos con los dominios @duoc.cl, @profesor.duoc.cl y @gmail.com');
-        return false;
-    }
-    
-    // Validar región y comuna
-    if (!region) {
-        alert('Debe seleccionar una región');
-        return false;
-    }
-    
-    if (!comuna) {
-        alert('Debe seleccionar una comuna');
-        return false;
-    }
-    
-    // Validar dirección
-    if (!direccion) {
-        alert('La dirección es requerida');
-        return false;
-    }
-    
-    if (direccion.length > 300) {
-        alert('La dirección no puede exceder los 300 caracteres');
-        return false;
-    }
-    
-    // Validar coincidencia de contraseñas
-    if (!verificarCoincidenciaContrasenas()) {
-        alert('Las contraseñas no coinciden');
-        return false;
-    }
-    
-    // Si todas las validaciones pasan, se puede enviar el formulario
-    alert('Formulario validado correctamente. Enviando datos...');
-    // Aquí normalmente se enviarían los datos al servidor
-    // form.submit();
 }
 
 // Inicializar eventos cuando el DOM esté cargado
-document.addEventListener("formUsuario").addEventListener("submit", function(e) {
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.getElementById("formRegistro");
     const runInput = document.getElementById("run");
     const nombreInput = document.getElementById("nombre");
+    const apellidoInput = document.getElementById("apellido");
     const correoInput = document.getElementById("correo");
-    const fechaInput = document.getElementById("fecha");
+    const contrasenaInput = document.getElementById("contrasena");
+    const confirmarContrasenaInput = document.getElementById("confirmarContrasena");
+    const direccionInput = document.getElementById("direccion");
+    const regionInput = document.getElementById("region");
+    const comunaInput = document.getElementById("comuna");
+    const telefonoInput = document.getElementById("telefono");
+    const fechaInput = document.getElementById("fechaNacimiento");
     const mensaje = document.getElementById("mensaje");
 
-    //limpiar los input y mensajes flotante automaticamente
-    [runInput, nombreInput, correoInput, fechaInput].forEach(input => {
-        input.addEventListener("input", () => {
-            input.setCustomValidity("");
-            mensaje.innerText = "";
-        });
+    if (!form) {
+        console.log("No se encontró #formRegistro");
+        return;
+    }
+
+    // Limpiar los input y mensajes flotante automáticamente
+    const inputs = [runInput, nombreInput, apellidoInput, correoInput, contrasenaInput, confirmarContrasenaInput, direccionInput, telefonoInput, fechaInput];
+    inputs.forEach(input => {
+        if (input) {
+            input.addEventListener("input", () => {
+                input.setCustomValidity("");
+                if (mensaje) mensaje.innerText = "";
+            });
+        }
     });
 
-    document.getElementById("formUsuario").addEventListener("submit", function(e) {
+    // Evento para cargar comunas cuando cambia la región
+    if (regionInput) {
+        regionInput.addEventListener("change", cargarComunas);
+    }
+
+    // Evento para verificar contraseñas en tiempo real
+    if (contrasenaInput && confirmarContrasenaInput) {
+        contrasenaInput.addEventListener("input", verificarCoincidenciaContrasenas);
+        confirmarContrasenaInput.addEventListener("input", verificarCoincidenciaContrasenas);
+    }
+
+    // Evento principal del formulario
+    form.addEventListener("submit", async function(e) {
         e.preventDefault();
     
-        //limpiar los mensajes
-        mensaje.innerText = "";
+        // Limpiar los mensajes
+        if (mensaje) mensaje.innerText = "";
     
-        //La validación correcta del run
-        runInput.value = runInput.value.trim().toUpperCase();
+        // La validación correcta del run
+        if (runInput) runInput.value = runInput.value.trim().toUpperCase();
     
-        //Guardar los valores de los otros input
-        const run = runInput.value;
-        const nombre = nombreInput.value.trim();
-        const correo = correoInput.value.trim();
-        const fecha = fechaInput.value;
+        // Guardar los valores de los input
+        const run = runInput ? runInput.value : '';
+        const nombre = nombreInput ? nombreInput.value.trim() : '';
+        const apellido = apellidoInput ? apellidoInput.value.trim() : '';
+        const correo = correoInput ? correoInput.value.trim() : '';
+        const contrasena = contrasenaInput ? contrasenaInput.value : '';
+        const confirmarContrasena = confirmarContrasenaInput ? confirmarContrasenaInput.value : '';
+        const direccion = direccionInput ? direccionInput.value.trim() : '';
+        const region = regionInput ? regionInput.value : '';
+        const comuna = comunaInput ? comunaInput.value : '';
+        const telefono = telefonoInput ? telefonoInput.value.trim() : '';
+        const fecha = fechaInput ? fechaInput.value : '';
     
-        //Validación Run
-        if(!validarRun(run)) {
-            runInput.setCustomValidity("El RUN es incorrecto. Debe tener 8 dígitos + número o K verificador");
-            runInput.reportValidity();
+        // Validación Run
+        if (!validarRun(run)) {
+            if (runInput) {
+                runInput.setCustomValidity("El RUN es incorrecto. Debe tener 8 dígitos + número o K verificador");
+                runInput.reportValidity();
+            }
             return;
         }
     
-        //Validación Nombre
+        // Validación Nombre
         if (nombre === "") {
-            nombreInput.setCustomValidity("El nombres es obligatorio")
-            nombreInput.reportValidity();
+            if (nombreInput) {
+                nombreInput.setCustomValidity("El nombre es obligatorio");
+                nombreInput.reportValidity();
+            }
+            return;
+        }
+
+        // Validación Apellido
+        if (apellido === "") {
+            if (apellidoInput) {
+                apellidoInput.setCustomValidity("El apellido es obligatorio");
+                apellidoInput.reportValidity();
+            }
             return;
         }
     
-        //Validación correo
+        // Validación correo
         if (!validarCorreo(correo)) {
-            correoInput.setCustomValidity("El correo debe ser '@duoc.cl', '@profesor.duoc.cl' o '@gmail.com'");
-            correoInput.reportValidity();
+            if (correoInput) {
+                correoInput.setCustomValidity("El correo debe ser '@duoc.cl', '@profesor.duoc.cl' o '@gmail.com'");
+                correoInput.reportValidity();
+            }
+            return;
+        }
+
+        // Validación contraseña
+        if (!contrasena || contrasena.length < 6) {
+            if (contrasenaInput) {
+                contrasenaInput.setCustomValidity("La contraseña debe tener al menos 6 caracteres");
+                contrasenaInput.reportValidity();
+            }
+            return;
+        }
+
+        // Validación confirmación de contraseña
+        if (contrasena !== confirmarContrasena) {
+            if (confirmarContrasenaInput) {
+                confirmarContrasenaInput.setCustomValidity("Las contraseñas no coinciden");
+                confirmarContrasenaInput.reportValidity();
+            }
+            return;
+        }
+
+        // Validación dirección
+        if (!direccion) {
+            if (direccionInput) {
+                direccionInput.setCustomValidity("La dirección es obligatoria");
+                direccionInput.reportValidity();
+            }
+            return;
+        }
+
+        // Validación región
+        if (!region) {
+            if (regionInput) {
+                regionInput.setCustomValidity("Debe seleccionar una región");
+                regionInput.reportValidity();
+            }
+            return;
+        }
+
+        // Validación comuna
+        if (!comuna) {
+            if (comunaInput) {
+                comunaInput.setCustomValidity("Debe seleccionar una comuna");
+                comunaInput.reportValidity();
+            }
             return;
         }
     
-        //Validación de Edad
-        if (!esMayorEdad(fecha)) {
-            fechaInput.setCustomValidity("Debe seer mayor a 18 años para registrarse");
-            fechaInput.reportValidity();
+        // Validación de Edad (si existe fecha)
+        if (fecha && !esMayorEdad(fecha)) {
+            if (fechaInput) {
+                fechaInput.setCustomValidity("Debe ser mayor a 18 años para registrarse");
+                fechaInput.reportValidity();
+            }
             return;
         }
     
-        //Todos los datos sean correctos
+        // Todos los datos son correctos
         let nombreUsuario = nombre;
-        mensaje.innerText = `Formulario enviado correctamente` //alt gr + tecla }]`
+        if (mensaje) {
+            mensaje.innerText = `Formulario enviado correctamente`;
+            mensaje.style.color = "green";
+        }
     
-        //Redirección a las paginas del perfil para el Admin o Cliente
-        //const destino = correo.toLowerCase() === "admin@duoc.cl" ?
-        //    `assets/page/perfilAdmin.html?nombre=${encodeURIComponent(nombreUsuario)}` :
-        //    `assets/page/perfilCliente.html?nombre=${encodeURIComponent(nombreUsuario)}`;
-    
-        //Tiempo de reacción al redirigir
-        //setTimeout(() => {
-          //  window.location.href = destino;
-        //}, 1000);
+        // Aquí iría la lógica para enviar a Firebase
         
-    
+        const userData = {
+            run,
+            nombre,
+            apellido,
+            correo,
+            clave: contrasena, // ¡IMPORTANTE!
+            direccion,
+            region,
+            comuna,
+            telefono: telefono || null,
+            fecha: fecha || null,
+            fechaRegistro: new Date().toISOString()
+        };
+
+        const guardadoExitoso = await guardarUsuario(userData);
+
+        if (guardadoExitoso) {
+            if (mensaje) {
+                mensaje.innerText = "Usuario registrado correctamente";
+                mensaje.style.color = "green";
+            }
+        } else {
+            if (mensaje) {
+                mensaje.innerText = "Error al guardar en la base de datos";
+                mensaje.style.color = "red";
+            }
+        }
+
+
+        // Redirección (descomentar cuando esté listo)
+        /*
+        const destino = correo.toLowerCase() === "admin@duoc.cl" ?
+            `assets/page/perfilAdmin.html?nombre=${encodeURIComponent(nombreUsuario)}` :
+            `assets/page/perfilCliente.html?nombre=${encodeURIComponent(nombreUsuario)}`;
+
+        setTimeout(() => {
+            window.location.href = destino;
+        }, 1000);
+        */
     });
 });

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Carrito de Compras - HuertoHogar</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="../css/home.css">
+  <link rel="stylesheet" href="../css/carrito.css">
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
+</head>
+<body>
+  <!-- BARRA DE NAVEGACIÓN ACTUALIZADA -->
+  <nav class="navbar navbar-expand-lg custom-navbar">
+    <div class="container">
+        <a class="navbar-brand" href="../../index.html">
+            <h2>HuertoHogar</h2>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" aria-current="page" href="../../index.html">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="producto.html">Productos</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../page/nosotro.html">Nosotros</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../page/blog.html">Blogs</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="../page/contacto.html">Contacto</a>
+                </li>
+            </ul>
+            
+            <!-- BUSCADOR -->
+            <div class="search-container me-3">
+                <input type="text" id="buscador" placeholder="Buscar productos..." class="search-input">
+                <button id="btnBuscar" class="btn-buscar">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+            <!-- BOTONES DE AUTENTICACIÓN -->
+            <div class="auth-buttons">
+                <button class="btn-login" onclick="window.location.href='login.html'">
+                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                </button>
+                <button class="btn-signup" onclick="window.location.href='registro.html'">
+                    <i class="fas fa-user-plus"></i> Crear Cuenta
+                </button>
+            </div>
+
+            <!-- ICONO DEL CARRITO -->
+            <div class="carrito-header ms-3">
+                <button class="btn-carrito" onclick="window.location.href='carrito.html'">
+                    <span class="carrito-icon">
+                        <i class="fas fa-shopping-cart"></i>
+                        <span class="carrito-count" id="carritoCount">0</span>
+                    </span>
+                    <span class="carrito-text">
+                        Total: $<span class="carrito-total">0</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="carrito-container">
+      <!-- Productos Recomendados -->
+      <section class="ofertas-section">
+        <h2 class="section-title">Productos Recomendados</h2>
+        <div id="productosOferta" class="productos-grid"></div>
+      </section>
+
+      <!-- Resumen del Carrito -->
+      <section class="resumen-carrito">
+        <h2 class="section-title">Resumen del Carrito</h2>
+        
+        <!-- Tabla de productos en carrito -->
+        <div class="tabla-carrito-container">
+          <table class="tabla-carrito">
+            <thead>
+              <tr>
+                <th>Imagen</th>
+                <th>Producto</th>
+                <th>Precio</th>
+                <th>Cantidad</th>
+                <th>Subtotal</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="tablaCarritoBody">
+              <!-- Los productos del carrito se insertarán aquí -->
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Total y Botones -->
+        <div class="carrito-footer">
+          <div class="total-container">
+            <span class="total-text">Total: $</span>
+            <span id="totalCarrito" class="total-precio">0</span>
+          </div>
+          <div class="botones-carrito">
+            <button id="btnLimpiarCarrito" class="btn-limpiar">
+              <i class="fas fa-trash"></i> Limpiar Carrito
+            </button>
+            <button id="btnComprarAhora" class="btn-comprar-ahora">
+              <i class="fas fa-credit-card"></i> Comprar Ahora
+            </button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
+  <script src="../js/carrito.js"></script>
+</body>
+</html>

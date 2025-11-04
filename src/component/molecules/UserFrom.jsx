@@ -6,7 +6,7 @@ import { addUser } from "../../services/firestoreService";
 import { useHistory } from "react-router-dom";
 
 const UserForm = () => {
-    const [form, setForm] = useState({ run:"", nombre:"", correo:"", clave:"", fecha:""});
+    const [form, setForm] = useState({ run:"", nombre:"", correo:"", clave:""});
     const [msg, setMsg] = useState("");
     const history = useHistory();
 
@@ -14,7 +14,8 @@ const UserForm = () => {
     
     const handleSubmit = async e => {
         e.preventDefault();
-        const { run, nombre, correo, clave, fecha} = form;
+        const { run, nombre, correo, clave} = form;
+        if (!validarRun(run)) return setMsg("RUN INCORRECTO")
         if (!validarClave(clave)) return setMsg("CLAVE INCORRECTO");
         if (!validarCorreo(correo)) return setMsg("CORREO INCORRECTO");
 

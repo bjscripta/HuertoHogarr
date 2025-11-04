@@ -8,14 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Inicializar Firebase
     const firebaseConfig = {
-        apiKey: "AIzaSyBBT7jka7a-7v3vY19BlSajamiedLrBTN0",
-        authDomain: "tiendanombretienda.firebaseapp.com",
-        projectId: "tiendanombretienda",
-        storageBucket: "tiendanombretienda.appspot.com",
-        messagingSenderId: "408928911689",
-        appId: "1:408928911689:web:d8b313c7e15fc528661a98",
-        measurementId: "G-Y1DW47VEWZ"
+    apiKey: "AIzaSyBQWpFadj7L-U-jF1b1DeEJqX-vDEmyiTA",
+    authDomain: "huertohogar-15d5.firebaseapp.com",
+    projectId: "huertohogar-15d5",
+    storageBucket: "huertohogar-15d5.appspot.com",
+    messagingSenderId: "663380007423",
+    appId: "1:663380007423:web:51638d3581e2453989efca",
+    measurementId: "G-6YRGN9FZLM"
     };
+
 
     if (!firebase.apps?.length) {
         firebase.initializeApp(firebaseConfig);

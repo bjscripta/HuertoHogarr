@@ -39,6 +39,26 @@ function validarCorreo(correo) {
     return dominiosPermitidos.some(dominio => correo.endsWith(dominio));
 }
 
+// Función para verificar coincidencia de contraseñas (ACTUALIZADA)
+function verificarCoincidenciaContrasenas() {
+    const clave = document.getElementById('clave').value;
+    const confirmarClave = document.getElementById('confirmarClave').value;
+    const mensaje = document.getElementById('passwordMatchMessage');
+    
+    if (clave && confirmarClave) {
+        if (clave === confirmarClave) {
+            mensaje.textContent = 'Las contraseñas coinciden';
+            mensaje.className = 'password-match success';
+            return true;
+        } else {
+            mensaje.textContent = 'Las contraseñas no coinciden';
+            mensaje.className = 'password-match error';
+            return false;
+        }
+    }
+    return false;
+}
+
 // Mapeo de regiones y comunas (ejemplo simplificado)
 const regionesComunas = {
     'arica': ['Arica', 'Camarones', 'Putre', 'General Lagos'],
@@ -93,27 +113,7 @@ function cargarComunas() {
     }
 }
 
-// Función para verificar coincidencia de contraseñas
-function verificarCoincidenciaContrasenas() {
-    const contrasena = document.getElementById('contrasena').value;
-    const confirmarContrasena = document.getElementById('confirmarContrasena').value;
-    const mensaje = document.getElementById('passwordMatchMessage');
-    
-    if (contrasena && confirmarContrasena) {
-        if (contrasena === confirmarContrasena) {
-            mensaje.textContent = 'Las contraseñas coinciden';
-            mensaje.className = 'password-match success';
-            return true;
-        } else {
-            mensaje.textContent = 'Las contraseñas no coinciden';
-            mensaje.className = 'password-match error';
-            return false;
-        }
-    }
-    return false;
-}
-
-// Función principal de validación del formulario
+// Función principal de validación del formulario (ACTUALIZADA)
 function validarFormulario(event) {
     event.preventDefault();
     
@@ -122,6 +122,8 @@ function validarFormulario(event) {
     const nombre = document.getElementById('nombre').value;
     const apellido = document.getElementById('apellido').value;
     const correo = document.getElementById('correo').value;
+    const clave = document.getElementById('clave').value;
+    const confirmarClave = document.getElementById('confirmarClave').value;
     const region = document.getElementById('region').value;
     const comuna = document.getElementById('comuna').value;
     const direccion = document.getElementById('direccion').value;
@@ -129,11 +131,6 @@ function validarFormulario(event) {
     // Validar RUN
     if (!run) {
         alert('El RUN es requerido');
-        return false;
-    }
-    
-    if (run.length < 7 || run.length > 10) { // Incluye el guión
-        alert('El RUN debe tener entre 7 y 9 dígitos más el guión y dígito verificador');
         return false;
     }
     
@@ -148,19 +145,9 @@ function validarFormulario(event) {
         return false;
     }
     
-    if (nombre.length > 50) {
-        alert('El nombre no puede exceder los 50 caracteres');
-        return false;
-    }
-    
     // Validar apellido
     if (!apellido) {
         alert('El apellido es requerido');
-        return false;
-    }
-    
-    if (apellido.length > 100) {
-        alert('El apellido no puede exceder los 100 caracteres');
         return false;
     }
     
@@ -170,13 +157,25 @@ function validarFormulario(event) {
         return false;
     }
     
-    if (correo.length > 100) {
-        alert('El correo electrónico no puede exceder los 100 caracteres');
+    if (!validarCorreo(correo)) {
+        alert('Solo se permiten correos con los dominios @duoc.cl, @profesor.duoc.cl y @gmail.com');
         return false;
     }
     
-    if (!validarCorreo(correo)) {
-        alert('Solo se permiten correos con los dominios @duoc.cl, @profesor.duoc.cl y @gmail.com');
+    // Validar contraseña
+    if (!clave) {
+        alert('La contraseña es requerida');
+        return false;
+    }
+    
+    if (clave.length < 6) {
+        alert('La contraseña debe tener al menos 6 caracteres');
+        return false;
+    }
+    
+    // Validar confirmación de contraseña
+    if (clave !== confirmarClave) {
+        alert('Las contraseñas no coinciden');
         return false;
     }
     
@@ -194,17 +193,6 @@ function validarFormulario(event) {
     // Validar dirección
     if (!direccion) {
         alert('La dirección es requerida');
-        return false;
-    }
-    
-    if (direccion.length > 300) {
-        alert('La dirección no puede exceder los 300 caracteres');
-        return false;
-    }
-    
-    // Validar coincidencia de contraseñas
-    if (!verificarCoincidenciaContrasenas()) {
-        alert('Las contraseñas no coinciden');
         return false;
     }
     
@@ -228,13 +216,13 @@ document.addEventListener('DOMContentLoaded', function() {
         regionSelect.addEventListener('change', cargarComunas);
     }
     
-    // Asignar eventos a los campos de contraseña
-    const contrasenaInput = document.getElementById('contrasena');
-    const confirmarContrasenaInput = document.getElementById('confirmarContrasena');
+    // Asignar eventos a los campos de contraseña (ACTUALIZADO)
+    const claveInput = document.getElementById('clave');
+    const confirmarClaveInput = document.getElementById('confirmarClave');
     
-    if (contrasenaInput && confirmarContrasenaInput) {
-        contrasenaInput.addEventListener('input', verificarCoincidenciaContrasenas);
-        confirmarContrasenaInput.addEventListener('input', verificarCoincidenciaContrasenas);
+    if (claveInput && confirmarClaveInput) {
+        claveInput.addEventListener('input', verificarCoincidenciaContrasenas);
+        confirmarClaveInput.addEventListener('input', verificarCoincidenciaContrasenas);
     }
     
     // Formatear RUN mientras se escribe
