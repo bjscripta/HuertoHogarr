@@ -12,8 +12,8 @@ const RouterConfig = () => (
     <Router>
         <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/perfil-admin" element={<PerfilAdmin />} />
-            <Route path="/perfil-cliente" element={<PerfilCliente />} />
+            <Route path="/perfAdmin" element={<PerfilAdmin />} />
+            <Route path="/perfCliente" element={<PerfilCliente />} />
             <Route path="/catalogo" element={<Catalogo />} />
             <Route path="/carrito" element={<Carrito />} />
             <Route path="/checkout" element={<Checkout />} />
