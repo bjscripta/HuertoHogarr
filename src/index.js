@@ -51,7 +51,7 @@ document.addEventListener("DOMContentLoaded", () => {
         nombre,
         apellido,
         correo,
-        clave, // En un caso real, deberías encriptar esta contraseña
+        clave,
         direccion,
         region,
         comuna,
