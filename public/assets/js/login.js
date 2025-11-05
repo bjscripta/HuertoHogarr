@@ -1,92 +1,70 @@
-document.addEventListener("DOMContentLoaded", () => {
-    const form = document.getElementById("formLogin");
-    const correoInput = document.getElementById("correoLogin");
-    const claveInput = document.getElementById("claveLogin");
-    const mensaje = document.getElementById("mensajeLogin");
+//Validación del correo
+function validarCorreo(correo) {
+    const regex = /^[\w.+-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$/i;
+    return regex.test(correo);
+}
 
-    if (!form) return console.error("No se encontró #formLogin");
+//Validación de la contraseña (entre 4 y 10 caracteres)
+function validarClave(clave) {
+    return clave.length >= 4 && clave.length <= 10;
+}
 
-    // Inicializar Firebase
-    const firebaseConfig = {
-    apiKey: "AIzaSyBQWpFadj7L-U-jF1b1DeEJqX-vDEmyiTA",
-    authDomain: "huertohogar-15d5.firebaseapp.com",
-    projectId: "huertohogar-15d5",
-    storageBucket: "huertohogar-15d5.appspot.com",
-    messagingSenderId: "663380007423",
-    appId: "1:663380007423:web:51638d3581e2453989efca",
-    measurementId: "G-6YRGN9FZLM"
-    };
-
-
-    if (!firebase.apps?.length) {
-        firebase.initializeApp(firebaseConfig);
-    }
-
-    const auth = firebase.auth();
-    const db = firebase.firestore();
-
-    form.addEventListener("submit", async (e) => {
+document.getElementById("formLogin").addEventListener("submit", function(e){
     e.preventDefault();
-    mensaje.innerText = "";
+    let correo = document.getElementById("correo").value.trim();
+    let clave = document.getElementById("clave").value.trim();
+    let mensajeElemento = document.getElementById("mensaje");
+    let esValido = true;
 
-    const correo = correoInput.value.trim().toLowerCase();
-    const clave = claveInput.value;
+    const correoInput = document.getElementById("correo");
+    const claveInput = document.getElementById("clave");
 
-    if (!correo || !clave) {
-        mensaje.style.color = "red";
-        mensaje.innerText = "Debes completar correo y clave";
+    // Limpiar mensajes previos
+    correoInput.setCustomValidity("");
+    claveInput.setCustomValidity("");
+    mensajeElemento.innerText = "";
+    mensajeElemento.className = "mt-3";
+
+    // Validar correo
+    if(!validarCorreo(correo)){
+        correoInput.setCustomValidity("El correo debe ser @duoc.cl, @profesor.duoc.cl o @gmail.com.");
+        correoInput.reportValidity();
+        esValido = false;
+    } 
+    
+    // Validar clave
+    if(!validarClave(clave)){
+        claveInput.setCustomValidity("La contraseña debe tener entre 4 y 10 caracteres.");
+        claveInput.reportValidity();
+        esValido = false;
+    }
+
+    // Si hay errores, detener el proceso
+    if (!esValido) {
         return;
     }
 
-    // Admin: autenticar con Firebase Auth
-    if (correo === "admin@duoc.cl") {
-        try {
-            await auth.signInWithEmailAndPassword(correo, clave);
-            // Guardar usuario en localStorage
-            const usuario = { nombre: "Administrador", correo, rol: "admin" };
-            localStorage.setItem("usuario", JSON.stringify(usuario));
+    // Todos los datos son correctos
+    mensajeElemento.innerText = "Inicio de sesión exitoso. Redirigiendo...";
+    mensajeElemento.classList.add("alert", "alert-success");
+    
+    const destino = correo.toLowerCase() === "admin@duoc.cl" ? 
+                    "../page/perfAdmin.html" : 
+                    "../page/perfCliente.html";
 
-            mensaje.style.color = "green";
-            mensaje.innerText = "Bienvenido Administrador, redirigiendo...";
-            setTimeout(() => {
-                window.location.href = `perfilAdmin.html`;
-            }, 1000);
-        } catch (error) {
-            console.error("Error login admin:", error);
-            mensaje.style.color = "red";
-            mensaje.innerText = "Credenciales incorrectas para administrador";
-        }
-        return;
-    }
-
-    // Cliente: validar desde Firestore
-    try {
-        const query = await db.collection("usuario")
-            .where("correo", "==", correo)
-            .where("clave", "==", clave)
-            .get();
-
-        if (!query.empty) {
-            const userData = query.docs[0].data();
-            const nombre = userData.nombre || correo;
-
-            // Guardar usuario en localStorage con rol real
-            const usuario = { nombre, correo, rol: "cliente" };
-            localStorage.setItem("usuario", JSON.stringify(usuario));
-
-            mensaje.style.color = "green";
-            mensaje.innerText = "Bienvenido cliente, redirigiendo...";
-            setTimeout(() => {
-                window.location.href = `perfilCliente.html`;
-            }, 1000);
-        } else {
-            mensaje.style.color = "red";
-            mensaje.innerText = "Correo o clave incorrectos";
-        }
-    } catch (error) {
-        console.error("Error login cliente:", error);
-        mensaje.style.color = "red";
-        mensaje.innerText = "Error al verificar usuario";
-    }
+    setTimeout(() => {
+        window.location.href = destino;
+    }, 1500);
 });
+
+// Validación en tiempo real para la contraseña
+document.getElementById("clave").addEventListener("input", function() {
+    const clave = this.value.trim();
+    const mensajeElemento = document.getElementById("mensaje");
+    
+    if (clave.length > 0 && !validarClave(clave)) {
+        this.setCustomValidity("La contraseña debe tener entre 4 y 10 caracteres.");
+    } else {
+        this.setCustomValidity("");
+    }
 });

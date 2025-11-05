@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Home from "../components/pages/Home";
-import PerfilAdmin from "../components/pages/PerfilAdmin";
-import PerfilCliente from "../components/pages/PerfilCliente";
+import Home from "../component/pages/Home";
+import PerfilAdmin from "../component/pages/PerfilAdmin";
+import PerfilCliente from "../component/pages/PerfilCliente";
 import Catalogo from "../components/pages/Catalogo";
 import Carrito from "../components/pages/Carrito";
 import Checkout from "../components/pages/Checkout";
@@ -11,9 +11,9 @@ import ErrorPago from "../components/pages/ErrorPago";
 const RouterConfig = () => (
     <Router>
         <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/perfAdmin" element={<PerfilAdmin />} />
-            <Route path="/perfCliente" element={<PerfilCliente />} />
+            <Route exact path="/" component={Home} />
+            <Route path="/perfil-admin" component={PerfilAdmin} />
+            <Route path="/perfil-cliente" component={PerfilCliente} />
             <Route path="/catalogo" element={<Catalogo />} />
             <Route path="/carrito" element={<Carrito />} />
             <Route path="/checkout" element={<Checkout />} />

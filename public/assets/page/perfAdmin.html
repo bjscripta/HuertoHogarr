@@ -16,13 +16,12 @@
 <body>
     <div class="admin-container">
         <div class="admin-sidebar">
-            <div>
+            <div class="sidebar-header">
                 <h1>HuertoHogar</h1>
                 <div class="admin-welcome">
                     <h3 id="bienvenido"></h3>
                 </div>
             </div>
-            
             <ul class="sidebar-menu">
                 <li class="menu-section">MENÚ PRINCIPAL</li>
                 <li class="menu-item">
@@ -36,46 +35,117 @@
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="#">
-                        <span>Seguridad</span>
+                    <a href="../page/producto.html">
+                        <span>Catalogo</span>
                     </a>
                 </li>
                 <li class="menu-item">
-                    <a href="#">
-                        <span>Ordenes</span>
+                    <a href="../page/carrito.html">
+                        <span>Carrito</span>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#">
-                        <span>Inventario</span>
-                    </a>
-                </li>
-                
+          
                 <li class="menu-section">CONFIGURACIÓN</li>
                 <li class="menu-item">
                     <a href="#">
                         <span>Perfil</span>
                     </a>
                 </li>
-                <li class="menu-item">
-                    <a href="#">
-                        <span>Buscar</span>
-                    </a>
-                </li>
-                <li class="menu-item">
-                    <a href="#">
-                        <span>Ayuda</span>
+                <li class="sidebar-footer">
+                    <a href="../page/login.html">
+                        <span>Cerrar Sesión</span>
                     </a>
                 </li>
             </ul>
             
-            <div class="sidebar-footer">
-                <a href="../page/login.html">
-                    <span>Cerrar Sesión</span>
-                </a>
+        </div>
+        <div class="admin-main">
+            <div class="dashboard-header">
+                <h1>Dashboard</h1>
+                <p>Resumen de las actividades diarias</p>
+            </div>
+            <div class="dashboard-grid">
+                <div class="metric-card">
+                    <h3>Compras</h3>
+                    <div class="metric-value">1,234</div>
+                    <div class="metric-change">Probabilidad de aumento: 20%</div>
+                </div>
+                
+                <div class="metric-card">
+                    <h3>Productos</h3>
+                    <div class="metric-value">400</div>
+                    <div class="metric-change">Inventario actual: 500</div>
+                </div>
+                
+                <div class="metric-card">
+                    <h3>Usuarios</h3>
+                    <div class="metric-value">890</div>
+                    <div class="metric-change">Nuevos usuarios este mes: 150</div>
+                </div>
+            </div>
+            <div class="dashboard-sections">
+                <div class="section-column">
+                    <div class="section-card">
+                        <h3>Dashboard</h3>
+                        <ul class="checklist">
+                            <li>
+                                <input type="checkbox" id="ordenes">
+                                <label for="ordenes">Ordenes</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="productos">
+                                <label for="productos">Productos</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="categorias">
+                                <label for="categorias">Categorías</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="usuarios" checked>
+                                <label for="usuarios">Usuarios</label>
+                            </li>
+                            <li>
+                                <input type="checkbox" id="reportes">
+                                <label for="reportes">Reportes</label>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="section-card">
+                        <h3>Perfil</h3>
+                        <p>Administración de la información personal y configuraciones de cuenta.</p>
+                    </div>
+                </div>
+                <div class="section-column">
+                    <div class="section-card">
+                        <h3>Dashboard</h3>
+                        <p>Visión general de todas las métricas y estadísticas clave del sistema.</p>
+                    </div>
+
+                    <div class="section-card">
+                        <h3>Usuarios</h3>
+                        <p>Gestión de cuentas de usuario y sus roles dentro del sistema.</p>
+                    </div>
+
+                    <div class="section-card">
+                        <h3>Reportes</h3>
+                        <p>Generación de informes detallados sobre las operaciones del sistema.</p>
+                    </div>
+
+                    <div class="section-card">
+                        <h3>Productos</h3>
+                        <p>Administrar inventario y detalles de los productos disponibles.</p>
+                    </div>
+
+                    <div class="section-card">
+                        <h3>Categorías</h3>
+                        <p>Organizar productos en categorías para facilitar su navegación.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
     <script src="../js/saludo.js"></script>
 </body>
