@@ -30,36 +30,37 @@
     </script>
 </head>
 <body>
-    <!-- Barra de navegación -->
-    <nav class="navbar navbar-expand-lg custom-navbar">
-        <div class="container">
-            <a class="navbar-brand" href="../../index.html">
-                <h2>HuertoHogar</h2>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" aria-current="page" href="../../index.html">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../page/producto.html">Productos</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../page/nosotro.html">Nosotros</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../page/blog.html">Blogs</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="../page/contacto.html">Contacto</a>
-                    </li>
-                </ul>
+    <header>
+        <nav class="navbar navbar-expand-lg custom-navbar">
+            <div class="container">
+                <a class="navbar-brand" href="../../index.html">
+                    <h2>HuertoHogar</h2>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" aria-current="page" href="../../index.html">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../page/producto.html">Productos</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../page/nosotro.html">Nosotros</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../page/blog.html">Blogs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="../page/contacto.html">Contacto</a>
+                        </li>
+                    </ul>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
      <div class="registration-container">
         <div class="container">
             <div class="registration-form">
@@ -67,9 +68,7 @@
                     <h1>Crear Cuenta</h1>
                     <p>Únete a la comunidad de HuertoHogar</p>
                 </div>
-                
                 <form id="formRegistro">
-                    <!-- RUN y Fecha de Nacimiento -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="run" class="form-label">RUN</label>
@@ -81,8 +80,6 @@
                             <input type="date" class="form-control" id="fechaNacimiento">
                         </div>
                     </div>
-                    
-                    <!-- Nombre y Apellido -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="nombre" class="form-label">Nombre</label>
@@ -93,8 +90,6 @@
                             <input type="text" class="form-control" id="apellido" required>
                         </div>
                     </div>
-                    
-                    <!-- Correo y Teléfono -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="correo" class="form-label">Correo Electrónico</label>
@@ -105,8 +100,6 @@
                             <input type="tel" class="form-control" id="telefono" placeholder="+56 9 1234 5678">
                         </div>
                     </div>
-                    
-                    <!-- Contraseñas -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="contrasena" class="form-label">Contraseña</label>
@@ -118,16 +111,12 @@
                             <div id="passwordMatchMessage" class="password-match"></div>
                         </div>
                     </div>
-                    
-                    <!-- Dirección -->
                     <div class="row">
                         <div class="col-12 mb-3">
                             <label for="direccion" class="form-label">Dirección</label>
                             <input type="text" class="form-control" id="direccion" placeholder="Calle, número, departamento, etc." required>
                         </div>
                     </div>
-                    
-                    <!-- Región y Comuna -->
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label for="region" class="form-label">Región</label>

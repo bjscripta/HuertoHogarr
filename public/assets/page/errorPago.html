@@ -15,67 +15,62 @@
   <link rel="stylesheet" href="../css/carrito.css">
 </head>
 <body>
-  <!-- BARRA DE NAVEGACIÓN ACTUALIZADA -->
-  <nav class="navbar navbar-expand-lg custom-navbar">
-    <div class="container">
-        <a class="navbar-brand" href="../../index.html">
-            <h2>HuertoHogar</h2>
-        </a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" aria-current="page" href="../../index.html">Home</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="producto.html">Productos</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../page/nosotro.html">Nosotros</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../page/blog.html">Blogs</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="../page/contacto.html">Contacto</a>
-                </li>
-            </ul>
-            
-            <!-- BUSCADOR -->
-            <div class="search-container me-3">
-                <input type="text" id="buscador" placeholder="Buscar productos..." class="search-input">
-                <button id="btnBuscar" class="btn-buscar">
-                    <i class="fas fa-search"></i>
-                </button>
-            </div>
-            
-            <!-- BOTONES DE AUTENTICACIÓN -->
-            <div class="auth-buttons">
-                <button class="btn-login" onclick="window.location.href='login.html'">
-                    <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
-                </button>
-                <button class="btn-signup" onclick="window.location.href='registro.html'">
-                    <i class="fas fa-user-plus"></i> Crear Cuenta
-                </button>
-            </div>
-
-            <!-- ICONO DEL CARRITO -->
-            <div class="carrito-header ms-3">
-                <button class="btn-carrito" onclick="window.location.href='carrito.html'">
-                    <span class="carrito-icon">
-                        <i class="fas fa-shopping-cart"></i>
-                        <span class="carrito-count" id="carritoCount">0</span>
-                    </span>
-                    <span class="carrito-text">
-                        $<span class="carrito-total">0</span>
-                    </span>
-                </button>
-            </div>
-        </div>
-    </div>
-  </nav>
+  <header>
+    <nav class="navbar navbar-expand-lg custom-navbar">
+      <div class="container">
+          <a class="navbar-brand" href="../../index.html">
+              <h2>HuertoHogar</h2>
+          </a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+              <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                      <a class="nav-link" aria-current="page" href="../../index.html">Home</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="producto.html">Productos</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="../page/nosotro.html">Nosotros</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="../page/blog.html">Blogs</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="../page/contacto.html">Contacto</a>
+                  </li>
+              </ul>
+              <div class="search-container me-3">
+                  <input type="text" id="buscador" placeholder="Buscar productos..." class="search-input">
+                  <button id="btnBuscar" class="btn-buscar">
+                      <i class="fas fa-search"></i>
+                  </button>
+              </div>
+              <div class="auth-buttons">
+                  <button class="btn-login" onclick="window.location.href='login.html'">
+                      <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                  </button>
+                  <button class="btn-signup" onclick="window.location.href='registro.html'">
+                      <i class="fas fa-user-plus"></i> Crear Cuenta
+                  </button>
+              </div>
+              <div class="carrito-header ms-3">
+                  <button class="btn-carrito" onclick="window.location.href='carrito.html'">
+                      <span class="carrito-icon">
+                          <i class="fas fa-shopping-cart"></i>
+                          <span class="carrito-count" id="carritoCount">0</span>
+                      </span>
+                      <span class="carrito-text">
+                          $<span class="carrito-total">0</span>
+                      </span>
+                  </button>
+              </div>
+          </div>
+      </div>
+    </nav>
+  </header>
 
   <!-- MAIN CONTENT -->
   <main class="main">
