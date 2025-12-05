@@ -1,0 +1,265 @@
+/* Estilos específicos para páginas de perfil */
+:root {
+    --primary-bg: #F7F7F7;
+    --accent-green: #2E8B57;
+    --accent-mustard: #FFD700;
+    --accent-brown: #8B4513;
+    --text-primary: #333333;
+    --text-secondary: #666666;
+}
+
+/* Contenedor principal del perfil */
+.profile-container {
+    min-height: 70vh;
+    padding: 3rem 0;
+}
+
+/* Tarjeta de perfil */
+.profile-card {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    border: 1px solid rgba(139, 69, 19, 0.1);
+}
+
+.profile-header {
+    background: linear-gradient(135deg, rgba(46, 139, 87, 0.1), rgba(255, 215, 0, 0.05));
+    padding: 2rem;
+    text-align: center;
+    border-bottom: 2px solid rgba(46, 139, 87, 0.2);
+}
+
+.profile-avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 0 auto 1rem;
+    border: 4px solid white;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.profile-name {
+    color: var(--accent-brown);
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.profile-email {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Sección de información */
+.info-section {
+    padding: 2rem;
+}
+
+.info-group {
+    margin-bottom: 1.5rem;
+}
+
+.info-group h5 {
+    color: var(--accent-green);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(46, 139, 87, 0.1);
+}
+
+.info-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+}
+
+.info-label {
+    font-weight: 600;
+    color: var(--accent-brown);
+    min-width: 120px;
+}
+
+.info-value {
+    color: var(--text-primary);
+    flex: 1;
+}
+
+/* Contraseña censurada */
+.password-censored {
+    font-family: monospace;
+    letter-spacing: 2px;
+    color: var(--text-secondary);
+}
+
+/* Botones de acción */
+.action-buttons {
+    padding: 1.5rem 2rem;
+    background: rgba(247, 247, 247, 0.5);
+    border-top: 1px solid rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.btn-profile {
+    min-width: 200px;
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+}
+
+/* Estilos para la página de edición */
+.edit-profile-card {
+    background: white;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+    border: 1px solid rgba(139, 69, 19, 0.1);
+}
+
+.profile-image-section {
+    text-align: center;
+}
+
+.profile-image-container {
+    position: relative;
+    display: inline-block;
+}
+
+.profile-image-preview {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--accent-green);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.image-upload-label {
+    cursor: pointer;
+    display: block;
+}
+
+.image-upload-label .btn {
+    transition: all 0.3s;
+}
+
+.image-upload-label .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(46, 139, 87, 0.3);
+}
+
+/* Títulos de secciones */
+.section-subtitle {
+    color: var(--accent-brown);
+    font-weight: 600;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid rgba(46, 139, 87, 0.2);
+}
+
+/* Validaciones de formulario */
+.form-text.match {
+    color: var(--accent-green);
+    font-weight: 500;
+}
+
+.form-text.mismatch {
+    color: #dc3545;
+    font-weight: 500;
+}
+
+/* Alertas personalizadas */
+.alert-profile {
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.alert-success {
+    background-color: rgba(46, 139, 87, 0.1);
+    border-left: 4px solid var(--accent-green);
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-left: 4px solid #dc3545;
+}
+
+/* Navegación de usuario */
+.user-dropdown .dropdown-toggle {
+    text-decoration: none;
+    color: var(--text-secondary) !important;
+    transition: all 0.3s;
+}
+
+.user-dropdown .dropdown-toggle:hover {
+    color: var(--accent-green) !important;
+}
+
+.user-avatar-sm {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--accent-green);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 0.9rem;
+    margin-right: 0.5rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 1.5rem 0;
+    }
+    
+    .profile-header {
+        padding: 1.5rem;
+    }
+    
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        font-size: 2.5rem;
+    }
+    
+    .info-section {
+        padding: 1.5rem;
+    }
+    
+    .info-item {
+        flex-direction: column;
+    }
+    
+    .info-label {
+        margin-bottom: 0.25rem;
+    }
+    
+    .btn-profile {
+        width: 100%;
+    }
+    
+    .profile-image-preview {
+        width: 120px;
+        height: 120px;
+    }
+}
+
+/* Estados de carga */
+.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.spinner-border-sm {
+    width: 1rem;
+    height: 1rem;
+}

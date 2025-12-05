@@ -1,69 +1,122 @@
-// editarPerfil.js
+// Configuración de Firebase
+const firebaseConfig = {
+    apiKey: "AIzaSyBQWpFadj7L-U-jF1b1DeEJqX-vDEmyiTA",
+    authDomain: "huertohogar-15d5.firebaseapp.com",
+    projectId: "huertohogar-15d5",
+    storageBucket: "huertohogar-15d5.appspot.com",
+    messagingSenderId: "663380007423",
+    appId: "1:663380007423:web:51638d3581e2453989efca",
+    measurementId: "G-6YRGN9FZLM"
+};
+
+// Inicializar Firebase
+if (!firebase.apps.length) {
+    firebase.initializeApp(firebaseConfig);
+}
+const auth = firebase.auth();
+const db = firebase.firestore();
+const storage = firebase.storage();
 
 // Variables globales
 let profileImageFile = null;
 let currentUserData = null;
 
+// Mapeo completo de regiones y comunas
+const regionesComunas = {
+    'arica': ['Arica', 'Camarones', 'Putre', 'General Lagos'],
+    'tarapaca': ['Iquique', 'Alto Hospicio', 'Pozo Almonte', 'Camiña', 'Colchane', 'Huara', 'Pica'],
+    'antofagasta': ['Antofagasta', 'Mejillones', 'Sierra Gorda', 'Taltal', 'Calama', 'Ollagüe', 'San Pedro de Atacama', 'Tocopilla', 'María Elena'],
+    'atacama': ['Copiapó', 'Caldera', 'Vallenar', 'Huasco', 'Tierra Amarilla', 'Freirina', 'Alto del Carmen'],
+    'coquimbo': ['La Serena', 'Coquimbo', 'Ovalle', 'Illapel', 'Los Vilos', 'Salamanca', 'Vicuña', 'Andacollo'],
+    'valparaiso': ['Valparaíso', 'Viña del Mar', 'Concón', 'Quilpué', 'Villa Alemana', 'San Antonio', 'Quillota', 'Los Andes', 'San Felipe'],
+    'metropolitana': ['Santiago', 'Cerrillos', 'Cerro Navia', 'Conchalí', 'El Bosque', 'Estación Central', 'Huechuraba', 'Independencia', 'La Cisterna', 'La Florida', 'La Granja', 'La Pintana', 'La Reina', 'Las Condes', 'Lo Barnechea', 'Lo Espejo', 'Lo Prado', 'Macul', 'Maipú', 'Ñuñoa', 'Pedro Aguirre Cerda', 'Peñalolén', 'Providencia', 'Pudahuel', 'Quilicura', 'Quinta Normal', 'Recoleta', 'Renca', 'San Joaquín', 'San Miguel', 'San Ramón', 'Vitacura', 'Puente Alto', 'Pirque', 'San José de Maipo', 'Colina', 'Lampa', 'Tiltil', 'San Bernardo', 'Buin', 'Calera de Tango', 'Paine', 'Melipilla', 'Alhué', 'Curacaví', 'María Pinto', 'San Pedro', 'Talagante', 'El Monte', 'Isla de Maipo', 'Padre Hurtado', 'Peñaflor'],
+    'ohiggins': ['Rancagua', 'Machalí', 'Graneros', 'Codegua', 'San Fernando', 'Rengo', 'Santa Cruz', 'San Vicente', 'Pichilemu'],
+    'maule': ['Talca', 'Curicó', 'Linares', 'Constitución', 'Cauquenes', 'Parral', 'San Javier', 'Molina'],
+    'nuble': ['Chillán', 'Chillán Viejo', 'Bulnes', 'Quillón', 'San Carlos', 'San Ignacio', 'Yungay'],
+    'biobio': ['Concepción', 'Talcahuano', 'Chiguayante', 'San Pedro de la Paz', 'Coronel', 'Lota', 'Tomé', 'Penco', 'Los Ángeles'],
+    'araucania': ['Temuco', 'Padre las Casas', 'Villarrica', 'Pucón', 'Angol', 'Victoria', 'Lautaro', 'Collipulli'],
+    'rios': ['Valdivia', 'La Unión', 'Paillaco', 'Río Bueno', 'Los Lagos', 'Panguipulli', 'Máfil'],
+    'lagos': ['Puerto Montt', 'Osorno', 'Puerto Varas', 'Ancud', 'Castro', 'Quellón', 'Frutillar', 'Llanquihue'],
+    'aysen': ['Coyhaique', 'Aysén', 'Puerto Aysén', 'Chile Chico', 'Cochrane', 'Puerto Cisnes'],
+    'magallanes': ['Punta Arenas', 'Puerto Natales', 'Porvenir', 'Puerto Williams', 'Cabo de Hornos']
+};
+
 // Cargar datos del usuario al cargar la página
 document.addEventListener('DOMContentLoaded', function() {
-    loadUserData();
-    updateUserNav();
-    
     // Verificar autenticación
-    auth.onAuthStateChanged((user) => {
-        if (!user) {
-            window.location.href = '../page/login.html';
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            await loadUserData(user);
+            updateUserNav(user);
+        } else {
+            window.location.href = '../../index.html';
         }
     });
+
+    // Configurar evento para verificar contraseñas
+    document.getElementById('editContrasena').addEventListener('input', checkPasswordMatch);
+    document.getElementById('confirmarContrasena').addEventListener('input', checkPasswordMatch);
+
+    // Configurar envío del formulario
+    document.getElementById('editProfileForm').addEventListener('submit', updateProfile);
 });
 
 // Cargar datos del usuario desde Firestore
-async function loadUserData() {
+async function loadUserData(user) {
     try {
-        const user = auth.currentUser;
-        if (!user) {
-            showError('Usuario no autenticado');
-            return;
-        }
+        console.log('Cargando datos del usuario:', user.uid);
 
-        // Obtener datos del usuario de Firestore
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        
-        if (userDoc.exists) {
-            const data = userDoc.data();
-            currentUserData = data;
-            
+        // Buscar usuario en la colección 'usuario' usando el email
+        const userQuery = await db.collection('usuario')
+            .where('correo', '==', user.email)
+            .get();
+
+        if (!userQuery.empty) {
+            // Obtener el primer documento que coincida
+            const doc = userQuery.docs[0];
+            currentUserData = doc.data();
+            currentUserData.id = doc.id;
+
+            console.log('Datos encontrados:', currentUserData);
+
             // Rellenar formulario con datos existentes
-            document.getElementById('editNombre').value = data.nombre || '';
-            document.getElementById('editApellido').value = data.apellido || '';
+            document.getElementById('editNombre').value = currentUserData.nombre || '';
+            document.getElementById('editApellido').value = currentUserData.apellido || '';
             document.getElementById('editCorreo').value = user.email || '';
-            document.getElementById('editTelefono').value = data.telefono || '';
-            document.getElementById('editRun').value = data.run || '';
-            document.getElementById('editDireccion').value = data.direccion || '';
+            document.getElementById('editTelefono').value = currentUserData.telefono || '';
+            document.getElementById('editRun').value = currentUserData.run || '';
+            document.getElementById('editDireccion').value = currentUserData.direccion || '';
             
             // Cargar región y comuna
-            if (data.region) {
-                document.getElementById('editRegion').value = data.region;
+            if (currentUserData.region) {
+                const regionSelect = document.getElementById('editRegion');
+                regionSelect.value = currentUserData.region;
+                
+                // Cargar comunas para la región seleccionada
                 cargarComunasEdit();
                 
-                // Esperar un momento para cargar la comuna
+                // Esperar un momento para seleccionar la comuna
                 setTimeout(() => {
-                    if (data.comuna) {
-                        document.getElementById('editComuna').value = data.comuna;
+                    if (currentUserData.comuna) {
+                        const comunaSelect = document.getElementById('editComuna');
+                        comunaSelect.value = currentUserData.comuna;
                     }
                 }, 100);
             }
             
             // Cargar imagen de perfil si existe
-            if (data.profileImage) {
-                document.getElementById('profileImagePreview').src = data.profileImage;
+            if (currentUserData.profileImage) {
+                document.getElementById('profileImagePreview').src = currentUserData.profileImage;
             }
             
         } else {
-            // Si no existe el documento, crear uno con datos básicos
-            await db.collection('users').doc(user.uid).set({
+            console.log('No se encontraron datos del usuario, creando documento...');
+            
+            // Crear un documento básico si no existe
+            currentUserData = {
                 nombre: '',
                 apellido: '',
+                correo: user.email,
                 telefono: '',
                 run: '',
                 direccion: '',
@@ -71,7 +124,11 @@ async function loadUserData() {
                 comuna: '',
                 createdAt: new Date(),
                 updatedAt: new Date()
-            });
+            };
+            
+            // Guardar en la colección 'usuario'
+            const docRef = await db.collection('usuario').add(currentUserData);
+            currentUserData.id = docRef.id;
         }
         
     } catch (error) {
@@ -81,12 +138,14 @@ async function loadUserData() {
 }
 
 // Actualizar navegación con datos del usuario
-async function updateUserNav() {
-    const user = auth.currentUser;
-    if (user) {
-        const userDoc = await db.collection('users').doc(user.uid).get();
-        if (userDoc.exists) {
-            const data = userDoc.data();
+async function updateUserNav(user) {
+    try {
+        const userQuery = await db.collection('usuario')
+            .where('correo', '==', user.email)
+            .get();
+        
+        if (!userQuery.empty) {
+            const data = userQuery.docs[0].data();
             const navName = document.getElementById('userNameNav');
             const navAvatar = document.getElementById('userAvatarNav');
             
@@ -98,6 +157,8 @@ async function updateUserNav() {
                 navAvatar.textContent = user.email.charAt(0).toUpperCase();
             }
         }
+    } catch (error) {
+        console.error('Error al actualizar navegación:', error);
     }
 }
 
@@ -130,39 +191,38 @@ function handleImageChange(event) {
 
 // Cargar comunas según región seleccionada
 function cargarComunasEdit() {
-    const region = document.getElementById('editRegion').value;
+    const regionSelect = document.getElementById('editRegion');
     const comunaSelect = document.getElementById('editComuna');
+    const regionId = regionSelect.value;
     
-    comunaSelect.innerHTML = '<option value="">Selecciona una comuna</option>';
-    comunaSelect.disabled = true;
+    comunaSelect.innerHTML = '';
     
-    if (region) {
+    if (regionId) {
         comunaSelect.disabled = false;
+        const comunas = regionesComunas[regionId] || [];
         
-        // Mapeo de comunas por región (ejemplo simplificado)
-        const comunas = {
-            'metropolitana': [
-                'Santiago', 'Providencia', 'Las Condes', 'Ñuñoa', 'Maipú',
-                'La Florida', 'Puente Alto', 'San Bernardo', 'La Cisterna',
-                'El Bosque', 'La Granja', 'La Pintana', 'San Miguel'
-            ],
-            'valparaiso': [
-                'Valparaíso', 'Viña del Mar', 'Concón', 'Quilpué', 'Villa Alemana',
-                'San Antonio', 'Quillota', 'Los Andes', 'San Felipe'
-            ],
-            'biobio': [
-                'Concepción', 'Talcahuano', 'Chiguayante', 'San Pedro de la Paz',
-                'Coronel', 'Lota', 'Tomé', 'Penco'
-            ]
-        };
+        // Agregar opción por defecto
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Selecciona una comuna';
+        defaultOption.disabled = true;
+        comunaSelect.appendChild(defaultOption);
         
-        const comunasRegion = comunas[region] || [];
-        comunasRegion.forEach(comuna => {
+        // Agregar comunas
+        comunas.forEach(comuna => {
             const option = document.createElement('option');
-            option.value = comuna.toLowerCase().replace(/\s+/g, '-');
+            option.value = comuna.toLowerCase().replace(/\s+/g, '_');
             option.textContent = comuna;
             comunaSelect.appendChild(option);
         });
+    } else {
+        comunaSelect.disabled = true;
+        const defaultOption = document.createElement('option');
+        defaultOption.value = '';
+        defaultOption.textContent = 'Primero selecciona una región';
+        defaultOption.disabled = true;
+        defaultOption.selected = true;
+        comunaSelect.appendChild(defaultOption);
     }
 }
 
@@ -178,12 +238,18 @@ function checkPasswordMatch() {
         return true;
     }
     
+    if (password.length < 6) {
+        messageElement.textContent = 'La contraseña debe tener al menos 6 caracteres';
+        messageElement.className = 'form-text mismatch';
+        return false;
+    }
+    
     if (password === confirmPassword) {
-        messageElement.textContent = 'Las contraseñas coinciden ✓';
+        messageElement.textContent = '✓ Las contraseñas coinciden';
         messageElement.className = 'form-text match';
         return true;
     } else {
-        messageElement.textContent = 'Las contraseñas no coinciden ✗';
+        messageElement.textContent = '✗ Las contraseñas no coinciden';
         messageElement.className = 'form-text mismatch';
         return false;
     }
@@ -194,13 +260,15 @@ async function uploadProfileImage(userId, imageFile) {
     try {
         // Crear referencia única para la imagen
         const storageRef = storage.ref();
-        const imageRef = storageRef.child(`profile_images/${userId}/${Date.now()}_${imageFile.name}`);
+        const fileExtension = imageFile.name.split('.').pop();
+        const fileName = `profile_${Date.now()}.${fileExtension}`;
+        const imageRef = storageRef.child(`profile_images/${userId}/${fileName}`);
         
         // Subir archivo
-        const snapshot = await imageRef.put(imageFile);
+        await imageRef.put(imageFile);
         
         // Obtener URL de descarga
-        const downloadURL = await snapshot.ref.getDownloadURL();
+        const downloadURL = await imageRef.getDownloadURL();
         
         return downloadURL;
     } catch (error) {
@@ -209,94 +277,130 @@ async function uploadProfileImage(userId, imageFile) {
     }
 }
 
+// Función para mostrar alertas
+function showAlert(type, message) {
+    const alertElement = type === 'success' ? document.getElementById('successAlert') : document.getElementById('errorAlert');
+    const messageElement = type === 'success' ? document.getElementById('successMessage') : document.getElementById('errorMessage');
+    
+    messageElement.textContent = message;
+    alertElement.style.display = 'block';
+    
+    // Ocultar automáticamente después de 5 segundos
+    setTimeout(() => {
+        alertElement.style.display = 'none';
+    }, 5000);
+}
+
+// Función auxiliar para showSuccess
+function showSuccess(message) {
+    showAlert('success', message);
+}
+
+// Función auxiliar para showError
+function showError(message) {
+    showAlert('error', message);
+}
+
 // Actualizar perfil
 async function updateProfile(event) {
     event.preventDefault();
     
-    // Deshabilitar botón de envío
     const submitBtn = document.getElementById('submitBtn');
     const originalText = submitBtn.innerHTML;
-    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>Guardando...';
+    submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
     submitBtn.disabled = true;
     
     try {
-        // Validar contraseñas
-        if (!checkPasswordMatch()) {
-            throw new Error('Las contraseñas no coinciden');
-        }
-        
+        // Obtener usuario actual
         const user = auth.currentUser;
         if (!user) {
             throw new Error('Usuario no autenticado');
         }
-        
+
+        // Validar contraseñas
+        if (!checkPasswordMatch()) {
+            throw new Error('Por favor verifica que las contraseñas coincidan');
+        }
+
         // Obtener datos del formulario
         const formData = {
             nombre: document.getElementById('editNombre').value.trim(),
             apellido: document.getElementById('editApellido').value.trim(),
-            telefono: document.getElementById('editTelefono').value.trim(),
-            run: document.getElementById('editRun').value.trim(),
+            telefono: document.getElementById('editTelefono').value.trim() || currentUserData?.telefono || '',
+            run: document.getElementById('editRun').value.trim() || currentUserData?.run || '',
             direccion: document.getElementById('editDireccion').value.trim(),
             region: document.getElementById('editRegion').value,
             comuna: document.getElementById('editComuna').value,
-            updatedAt: new Date()
+            updatedAt: new Date().toISOString()
         };
-        
-        // Validaciones básicas
-        if (!formData.nombre) throw new Error('El nombre es requerido');
-        if (!formData.apellido) throw new Error('El apellido es requerido');
-        if (!formData.direccion) throw new Error('La dirección es requerida');
-        if (!formData.region) throw new Error('La región es requerida');
-        if (!formData.comuna) throw new Error('La comuna es requerida');
-        
+
+        // Validaciones
+        if (!formData.nombre) throw new Error('El nombre es obligatorio');
+        if (!formData.apellido) throw new Error('El apellido es obligatorio');
+        if (!formData.direccion) throw new Error('La dirección es obligatoria');
+        if (!formData.region) throw new Error('La región es obligatoria');
+        if (!formData.comuna) throw new Error('La comuna es obligatoria');
+
         let profileImageUrl = currentUserData?.profileImage;
-        
+
         // Subir nueva imagen si existe
         if (profileImageFile) {
             profileImageUrl = await uploadProfileImage(user.uid, profileImageFile);
+            formData.profileImage = profileImageUrl;
         }
-        
-        // Actualizar datos en Firestore
-        await db.collection('users').doc(user.uid).update({
-            ...formData,
-            profileImage: profileImageUrl
-        });
-        
-        // Actualizar email si cambió
+
+        // Obtener el nuevo email
         const newEmail = document.getElementById('editCorreo').value.trim();
+        formData.correo = newEmail;
+
+        // Obtener la nueva contraseña (si se cambió)
+        const newPassword = document.getElementById('editContrasena').value;
+
+        // Actualizar email en Auth si cambió
         if (newEmail !== user.email) {
             try {
                 await user.updateEmail(newEmail);
+                console.log('Email actualizado en Auth');
             } catch (emailError) {
                 if (emailError.code === 'auth/requires-recent-login') {
                     throw new Error('Para cambiar el email, necesitas iniciar sesión nuevamente');
                 }
-                throw emailError;
+                throw new Error('Error al actualizar el email: ' + emailError.message);
             }
         }
-        
+
         // Actualizar contraseña si se proporcionó
-        const newPassword = document.getElementById('editContrasena').value;
         if (newPassword) {
             try {
                 await user.updatePassword(newPassword);
+                console.log('Contraseña actualizada en Auth');
             } catch (passwordError) {
                 if (passwordError.code === 'auth/requires-recent-login') {
                     throw new Error('Para cambiar la contraseña, necesitas iniciar sesión nuevamente');
                 }
-                throw passwordError;
+                throw new Error('Error al actualizar la contraseña: ' + passwordError.message);
             }
         }
-        
-        // Mostrar mensaje de éxito
-        showSuccess('Perfil actualizado correctamente');
-        
-        // Actualizar navegación
-        updateUserNav();
-        
-        // Limpiar archivo de imagen
-        profileImageFile = null;
-        
+
+        // Actualizar datos en Firestore
+        if (currentUserData && currentUserData.id) {
+            await db.collection('usuario').doc(currentUserData.id).update(formData);
+            console.log('Datos actualizados en Firestore');
+            
+            // Actualizar datos locales
+            currentUserData = { ...currentUserData, ...formData };
+            
+            // Mostrar mensaje de éxito
+            showSuccess('Perfil actualizado correctamente');
+            
+            // Redirigir después de 2 segundos
+            setTimeout(() => {
+                window.location.href = '../page/perfCliente.html';
+            }, 2000);
+        } else {
+            throw new Error('No se encontró el ID del usuario');
+        }
+
     } catch (error) {
         console.error('Error al actualizar perfil:', error);
         showError(error.message || 'Error al actualizar el perfil');
@@ -307,16 +411,12 @@ async function updateProfile(event) {
     }
 }
 
-// Mostrar mensaje de éxito
-function showSuccess(message) {
-    const alert = document.getElementById('successAlert');
-    const messageSpan = document.getElementById('successMessage');
-    
-    messageSpan.textContent = message;
-    alert.style.display = 'block';
-    
-    // Ocultar después de 5 segundos
-    setTimeout(() => {
-        alert.style.display = 'none';
-    }, 5000);
+// Función de logout
+function logout() {
+    auth.signOut().then(() => {
+        window.location.href = '../../index.html';
+    }).catch((error) => {
+        console.error('Error al cerrar sesión:', error);
+        showError('Error al cerrar sesión');
+    });
 }

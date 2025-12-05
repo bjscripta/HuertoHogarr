@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Perfil - HuertoHogar</title>
+    <title>Mi Perfil - HuertoHogar</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -11,7 +11,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <link rel="stylesheet" href="../css/home.css">
-    <link rel="stylesheet" href="../css/editarPerfil.css">
+    <link rel="stylesheet" href="../css/perfilCli.css">
 </head>
 <body>
     <header>
@@ -45,13 +45,13 @@
                         <div class="nav-item dropdown user-dropdown">
                             <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <div class="user-avatar-sm" id="userAvatarNav">
-                                    
+                                    P
                                 </div>
-                                <span id="userNameNav">Perfil</span>
+                                <span id="userNameNav">Cargando...</span>
                             </a>
                             <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                                <li><a class="dropdown-item" href="../page/perfilCliente.html"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
-                                <li><a class="dropdown-item" href="#"><i class="bi bi-pencil-square me-2"></i>Editar Perfil</a></li>
+                                <li><a class="dropdown-item" href="../page/perfCliente.html"><i class="bi bi-person me-2"></i>Mi Perfil</a></li>
+                                <li><a class="dropdown-item" href="../page/editarPerfil.html"><i class="bi bi-pencil-square me-2"></i>Editar Perfil</a></li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="#" onclick="logout()"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
                             </ul>
@@ -62,234 +62,87 @@
         </nav>
     </header>
 
-    <div class="container mt-5 mb-5">
+    <div class="container profile-container">
+        <!-- Alertas -->
+        <div id="successAlert" class="alert alert-success alert-profile alert-dismissible fade show" role="alert" style="display: none;">
+            <i class="bi bi-check-circle-fill me-2"></i>
+            <span id="successMessage"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+
         <div class="row justify-content-center">
             <div class="col-lg-8">
-                <!-- Título y mensajes -->
-                <div class="text-center mb-4">
-                    <h1 class="section-title mb-3">Editar Perfil</h1>
-                    <p class="text-muted">Actualiza tu información personal</p>
-                </div>
+                <!-- Tarjeta de perfil -->
+                <div class="profile-card">
+                    <!-- Encabezado del perfil -->
+                    <div class="profile-header">
+                        <div class="profile-avatar" id="mainUserAvatar">
+                            <span id="avatarText">U</span>
+                        </div>
+                        <h3 class="profile-name" id="userFullName">Cargando...</h3>
+                        <p class="profile-email" id="userEmail">cargando@ejemplo.com</p>
+                    </div>
 
-                <!-- Alertas -->
-                <div id="successAlert" class="alert alert-success alert-dismissible fade show" role="alert" style="display: none;">
-                    <i class="bi bi-check-circle-fill me-2"></i>
-                    <span id="successMessage"></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-                <div id="errorAlert" class="alert alert-danger alert-dismissible fade show" role="alert" style="display: none;">
-                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                    <span id="errorMessage"></span>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-
-                <!-- Tarjeta de edición -->
-                <div class="card edit-profile-card">
-                    <div class="card-body">
-                        <!-- Sección de imagen de perfil -->
-                        <div class="profile-image-section text-center mb-5">
-                            <div class="profile-image-container">
-                                <img 
-                                    src="../img/default-avatar.png" 
-                                    alt="Foto de perfil" 
-                                    class="profile-image-preview"
-                                    id="profileImagePreview"
-                                >
-                                <label for="profileImageInput" class="image-upload-label">
-                                    <div class="btn btn-outline-success mt-3">
-                                        <i class="bi bi-camera me-2"></i>
-                                        Cambiar foto
-                                    </div>
-                                    <input 
-                                        type="file" 
-                                        id="profileImageInput" 
-                                        accept="image/*" 
-                                        class="d-none"
-                                        onchange="handleImageChange(event)"
-                                    >
-                                </label>
-                                <p class="text-muted small mt-2">Formatos: JPG, PNG (Máx. 2MB)</p>
+                    <!-- Información personal -->
+                    <div class="info-section">
+                        <div class="info-group">
+                            <h5><i class="bi bi-person-badge me-2"></i>Información Personal</h5>
+                            <div class="info-item">
+                                <span class="info-label">Nombre:</span>
+                                <span class="info-value" id="profileName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Apellido:</span>
+                                <span class="info-value" id="profileLastName">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">RUN:</span>
+                                <span class="info-value" id="profileRun">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Correo:</span>
+                                <span class="info-value" id="profileEmail">-</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Teléfono:</span>
+                                <span class="info-value" id="profilePhone">-</span>
                             </div>
                         </div>
 
-                        <form id="editProfileForm" onsubmit="updateProfile(event)">
-                            <!-- Información personal -->
-                            <h4 class="mb-4 section-subtitle">
-                                <i class="bi bi-person-badge me-2"></i>Información Personal
-                            </h4>
-                            
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="editNombre" class="form-label">Nombre *</label>
-                                        <input 
-                                            type="text" 
-                                            class="form-control" 
-                                            id="editNombre" 
-                                            required
-                                            placeholder="Ingresa tu nombre"
-                                        >
-                                        <div class="invalid-feedback" id="nombreError"></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="editApellido" class="form-label">Apellido *</label>
-                                        <input 
-                                            type="text" 
-                                            class="form-control" 
-                                            id="editApellido" 
-                                            required
-                                            placeholder="Ingresa tu apellido"
-                                        >
-                                        <div class="invalid-feedback" id="apellidoError"></div>
-                                    </div>
-                                </div>
+                        <div class="info-group">
+                            <h5><i class="bi bi-geo-alt me-2"></i>Dirección</h5>
+                            <div class="info-item">
+                                <span class="info-label">Dirección:</span>
+                                <span class="info-value" id="profileAddress">-</span>
                             </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="editCorreo" class="form-label">Correo Electrónico *</label>
-                                        <input 
-                                            type="email" 
-                                            class="form-control" 
-                                            id="editCorreo" 
-                                            required
-                                            placeholder="ejemplo@email.com"
-                                        >
-                                        <div class="invalid-feedback" id="correoError"></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="editTelefono" class="form-label">Teléfono</label>
-                                        <input 
-                                            type="tel" 
-                                            class="form-control" 
-                                            id="editTelefono" 
-                                            placeholder="+56 9 1234 5678"
-                                        >
-                                    </div>
-                                </div>
+                            <div class="info-item">
+                                <span class="info-label">Región:</span>
+                                <span class="info-value" id="profileRegion">-</span>
                             </div>
-
-                            <!-- RUN (Chile) -->
-                            <div class="mb-3">
-                                <label for="editRun" class="form-label">RUN (Rol Único Nacional)</label>
-                                <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    id="editRun" 
-                                    placeholder="12.345.678-9"
-                                    pattern="\d{1,2}\.\d{3}\.\d{3}-[\dkK]"
-                                    title="Formato: 12.345.678-9"
-                                >
-                                <div class="form-text">Formato: 12.345.678-9 (con puntos y guión)</div>
+                            <div class="info-item">
+                                <span class="info-label">Comuna:</span>
+                                <span class="info-value" id="profileComuna">-</span>
                             </div>
+                        </div>
 
-                            <!-- Información de ubicación -->
-                            <h4 class="mb-4 mt-5 section-subtitle">
-                                <i class="bi bi-geo-alt me-2"></i>Dirección
-                            </h4>
-
-                            <div class="mb-3">
-                                <label for="editDireccion" class="form-label">Dirección *</label>
-                                <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    id="editDireccion" 
-                                    required
-                                    placeholder="Calle, número, departamento"
-                                >
-                                <div class="invalid-feedback" id="direccionError"></div>
+                        <div class="info-group">
+                            <h5><i class="bi bi-shield-lock me-2"></i>Seguridad</h5>
+                            <div class="info-item">
+                                <span class="info-label">Contraseña:</span>
+                                <span class="info-value password-censored">••••••••</span>
                             </div>
-
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="editRegion" class="form-label">Región *</label>
-                                        <select class="form-select" id="editRegion" required onchange="cargarComunasEdit()">
-                                            <option value="">Selecciona una región</option>
-                                            <option value="arica">Arica y Parinacota</option>
-                                            <option value="tarapaca">Tarapacá</option>
-                                            <option value="antofagasta">Antofagasta</option>
-                                            <option value="atacama">Atacama</option>
-                                            <option value="coquimbo">Coquimbo</option>
-                                            <option value="valparaiso">Valparaíso</option>
-                                            <option value="metropolitana">Metropolitana de Santiago</option>
-                                            <option value="ohiggins">Libertador B. O'Higgins</option>
-                                            <option value="maule">Maule</option>
-                                            <option value="nuble">Ñuble</option>
-                                            <option value="biobio">Biobío</option>
-                                            <option value="araucania">La Araucanía</option>
-                                            <option value="rios">Los Ríos</option>
-                                            <option value="lagos">Los Lagos</option>
-                                            <option value="aysen">Aysén</option>
-                                            <option value="magallanes">Magallanes</option>
-                                        </select>
-                                        <div class="invalid-feedback" id="regionError"></div>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="mb-3">
-                                        <label for="editComuna" class="form-label">Comuna *</label>
-                                        <select class="form-select" id="editComuna" required disabled>
-                                            <option value="">Primero selecciona una región</option>
-                                        </select>
-                                        <div class="invalid-feedback" id="comunaError"></div>
-                                    </div>
-                                </div>
+                            <div class="info-item">
+                                <span class="info-label">Última actualización:</span>
+                                <span class="info-value" id="profileLastUpdate">-</span>
                             </div>
+                        </div>
+                    </div>
 
-                            <!-- Cambio de contraseña -->
-                            <h4 class="mb-4 mt-5 section-subtitle">
-                                <i class="bi bi-shield-lock me-2"></i>Seguridad
-                            </h4>
-
-                            <div class="mb-3">
-                                <label for="editContrasena" class="form-label">Nueva Contraseña</label>
-                                <input 
-                                    type="password" 
-                                    class="form-control" 
-                                    id="editContrasena" 
-                                    minlength="6"
-                                    placeholder="Mínimo 6 caracteres (dejar en blanco para no cambiar)"
-                                >
-                                <div class="form-text">Deja este campo en blanco si no quieres cambiar la contraseña</div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="confirmarContrasena" class="form-label">Confirmar Nueva Contraseña</label>
-                                <input 
-                                    type="password" 
-                                    class="form-control" 
-                                    id="confirmarContrasena"
-                                    placeholder="Repite la nueva contraseña"
-                                    oninput="checkPasswordMatch()"
-                                >
-                                <div id="passwordMatchMessage" class="form-text"></div>
-                            </div>
-
-                            <!-- Botones de acción -->
-                            <div class="d-flex justify-content-between mt-5 pt-4 border-top">
-                                <button 
-                                    type="button" 
-                                    class="btn btn-outline-secondary"
-                                    onclick="window.location.href='perfilCliente.html'"
-                                >
-                                    <i class="bi bi-arrow-left me-2"></i>Volver al Perfil
-                                </button>
-                                
-                                <button 
-                                    type="submit" 
-                                    class="btn btn-success"
-                                    id="submitBtn"
-                                >
-                                    <i class="bi bi-check-lg me-2"></i>Guardar Cambios
-                                </button>
-                            </div>
-                        </form>
+                    <!-- Botones de acción -->
+                    <div class="action-buttons">
+                        <a href="../page/editarPerfil.html" class="btn btn-success btn-profile">
+                            <i class="bi bi-pencil-square me-2"></i>Modificar Perfil
+                        </a>
                     </div>
                 </div>
             </div>
@@ -338,7 +191,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-storage.js"></script>
     
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
@@ -362,14 +214,158 @@
         }
         const auth = firebase.auth();
         const db = firebase.firestore();
-        const storage = firebase.storage();
 
         // Variables globales
-        let profileImageFile = null;
         let currentUserData = null;
+
+        // Formatear nombres de regiones y comunas
+        function formatearNombre(texto) {
+            if (!texto) return '-';
+            return texto
+                .replace(/_/g, ' ')
+                .replace(/\b\w/g, l => l.toUpperCase());
+        }
+
+        // Formatear fecha
+        function formatearFecha(fechaString) {
+            if (!fechaString) return '-';
+            const fecha = new Date(fechaString);
+            return fecha.toLocaleDateString('es-CL', {
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Cargar datos del usuario
+        async function loadUserProfile() {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    throw new Error('Usuario no autenticado');
+                }
+
+                // Buscar usuario en la colección 'usuario'
+                const userQuery = await db.collection('usuario')
+                    .where('correo', '==', user.email)
+                    .get();
+
+                if (!userQuery.empty) {
+                    const doc = userQuery.docs[0];
+                    currentUserData = doc.data();
+                    currentUserData.id = doc.id;
+
+                    // Actualizar interfaz
+                    updateProfileUI();
+                    updateUserNav();
+                } else {
+                    showAlert('error', 'No se encontraron datos del perfil.');
+                }
+
+            } catch (error) {
+                console.error('Error al cargar perfil:', error);
+                showAlert('error', 'Error al cargar los datos del perfil');
+            }
+        }
+
+        // Actualizar interfaz del perfil
+        function updateProfileUI() {
+            if (!currentUserData) return;
+
+            // Actualizar avatar y nombre
+            const nombre = currentUserData.nombre || 'Usuario';
+            const apellido = currentUserData.apellido || '';
+            const fullName = `${nombre} ${apellido}`.trim();
+            const firstLetter = nombre.charAt(0).toUpperCase();
+
+            document.getElementById('userFullName').textContent = fullName;
+            document.getElementById('avatarText').textContent = firstLetter;
+            document.getElementById('userEmail').textContent = currentUserData.correo || 'No especificado';
+
+            // Actualizar información personal
+            document.getElementById('profileName').textContent = nombre;
+            document.getElementById('profileLastName').textContent = apellido;
+            document.getElementById('profileRun').textContent = currentUserData.run || '-';
+            document.getElementById('profileEmail').textContent = currentUserData.correo || '-';
+            document.getElementById('profilePhone').textContent = currentUserData.telefono || 'No especificado';
+
+            // Actualizar dirección
+            document.getElementById('profileAddress').textContent = currentUserData.direccion || '-';
+            document.getElementById('profileRegion').textContent = formatearNombre(currentUserData.region);
+            document.getElementById('profileComuna').textContent = formatearNombre(currentUserData.comuna);
+
+            // Actualizar última actualización
+            document.getElementById('profileLastUpdate').textContent = formatearFecha(currentUserData.updatedAt) || 
+                                                                       formatearFecha(currentUserData.createdAt) || '-';
+        }
+
+        // Actualizar navegación
+        async function updateUserNav() {
+            try {
+                const user = auth.currentUser;
+                if (!user) return;
+
+                const userQuery = await db.collection('usuario')
+                    .where('correo', '==', user.email)
+                    .get();
+                
+                if (!userQuery.empty) {
+                    const data = userQuery.docs[0].data();
+                    const navName = document.getElementById('userNameNav');
+                    const navAvatar = document.getElementById('userAvatarNav');
+                    
+                    if (data.nombre) {
+                        const displayName = `${data.nombre} ${data.apellido || ''}`.trim();
+                        navName.textContent = displayName;
+                        navAvatar.textContent = data.nombre.charAt(0).toUpperCase();
+                    } else {
+                        navName.textContent = user.email;
+                        navAvatar.textContent = user.email.charAt(0).toUpperCase();
+                    }
+                }
+            } catch (error) {
+                console.error('Error al actualizar navegación:', error);
+            }
+        }
+
+        // Función para mostrar alertas
+        function showAlert(type, message) {
+            const alertElement = type === 'success' ? document.getElementById('successAlert') : document.getElementById('errorAlert');
+            const messageElement = type === 'success' ? document.getElementById('successMessage') : document.getElementById('errorMessage');
+            
+            if (alertElement && messageElement) {
+                messageElement.textContent = message;
+                alertElement.style.display = 'block';
+                
+                setTimeout(() => {
+                    alertElement.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Función de logout
+        function logout() {
+            auth.signOut().then(() => {
+                window.location.href = '../../index.html';
+            }).catch((error) => {
+                console.error('Error al cerrar sesión:', error);
+                showAlert('error', 'Error al cerrar sesión');
+            });
+        }
+
+        // Inicializar cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar autenticación
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    loadUserProfile();
+                } else {
+                    window.location.href = '../../index.html';
+                }
+            });
+        });
     </script>
-    
-    <script src="../js/editarPerfil.js"></script>
-    <script src="../js/perfCliente.js"></script>
 </body>
 </html>
