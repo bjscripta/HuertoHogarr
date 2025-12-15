@@ -35,24 +35,13 @@ function mostrarMensaje(elemento, mensaje, tipo = 'error') {
     elemento.style.display = 'block';
 }
 
-// Función para verificar si el usuario es admin
+// ========== FUNCIÓN SIMPLIFICADA: verificarAdmin ==========
 async function verificarAdmin(correo) {
-    try {
-        // Buscar en la colección usuario por correo
-        const userQuery = await db.collection('usuario')
-            .where('correo', '==', correo.toLowerCase())
-            .get();
-        
-        if (!userQuery.empty) {
-            const userData = userQuery.docs[0].data();
-            // Verificar si es admin
-            return userData.correo === 'admin@duoc.cl' || userData.rol === 'admin';
-        }
-        return false;
-    } catch (error) {
-        console.error('Error al verificar admin:', error);
-        return false;
-    }
+    // SOLO verifica si el correo es exactamente 'admin@duoc.cl'
+    // Ya no busca en Firestore, evitando errores.
+    const esAdministrador = correo.toLowerCase() === 'admin@duoc.cl';
+    console.log(`Verificación rápida: ¿${correo} es admin? ${esAdministrador}`);
+    return esAdministrador;
 }
 
 // Función para iniciar sesión con Firebase
@@ -121,7 +110,7 @@ async function iniciarSesionFirebase(correo, clave) {
     }
 }
 
-// Evento principal del formulario
+// ========== EVENTO PRINCIPAL DEL FORMULARIO - CORREGIDO ==========
 document.getElementById("formLogin").addEventListener("submit", async function(e){
     e.preventDefault();
     
@@ -165,22 +154,23 @@ document.getElementById("formLogin").addEventListener("submit", async function(e
     submitBtn.disabled = true;
 
     try {
-        // Intentar iniciar sesión con Firebase
+        // 1. Intentar iniciar sesión con Firebase Authentication
         const resultado = await iniciarSesionFirebase(correo, clave);
         
         if (resultado.success) {
-            // Inicio de sesión exitoso
+            // 2. Inicio de sesión exitoso
             mostrarMensaje(mensajeElemento, "Inicio de sesión exitoso. Redirigiendo...", 'success');
             
-            // Verificar si es admin para redirigir a la página correcta
-            const esAdmin = await verificarAdmin(correo);
+            // 3. Verificación RÁPIDA y DIRECTA por correo
+            const esAdmin = correo.toLowerCase() === 'admin@duoc.cl';
+            console.log(`Redirigiendo a: ${esAdmin ? 'ADMIN' : 'CLIENTE'}`);
             
-            // Esperar 1.5 segundos antes de redirigir
+            // 4. Redirigir sin depender de Firestore
             setTimeout(() => {
                 if (esAdmin) {
                     window.location.href = "../page/perfAdmin.html";
                 } else {
-                    window.location.href = "../page/perfilCliente.html";
+                    window.location.href = "../page/perfCliente.html";
                 }
             }, 1500);
             
@@ -197,6 +187,21 @@ document.getElementById("formLogin").addEventListener("submit", async function(e
         submitBtn.innerHTML = originalText;
         submitBtn.disabled = false;
     }
+});
+
+// ========== LISTENER PARA USUARIOS YA AUTENTICADOS - SIMPLIFICADO ==========
+// Este código solo se ejecuta al cargar la página, no interfiere con el login
+auth.onAuthStateChanged((user) => {
+    if (user) {
+        console.log('Usuario YA autenticado detectado al cargar la página:', user.email);
+        // Redirigir inmediatamente según su tipo
+        if (user.email.toLowerCase() === 'admin@duoc.cl') {
+            window.location.href = "../page/perfAdmin.html";
+        } else {
+            window.location.href = "../page/perfCliente.html";
+        }
+    }
+    // Si no hay usuario, se queda en la página de login
 });
 
 // Validación en tiempo real para la contraseña
@@ -218,20 +223,5 @@ document.getElementById("correo").addEventListener("input", function() {
         this.setCustomValidity("El correo debe ser @duoc.cl, @profesor.duoc.cl o @gmail.com.");
     } else {
         this.setCustomValidity("");
-    }
-});
-
-// Verificar si ya hay un usuario autenticado al cargar la página
-auth.onAuthStateChanged((user) => {
-    if (user) {
-        console.log('Usuario ya autenticado:', user.email);
-        // Si el usuario ya está autenticado, redirigir según su tipo
-        verificarAdmin(user.email).then(esAdmin => {
-            if (esAdmin) {
-                window.location.href = "../page/perfAdmin.html";
-            } else {
-                window.location.href = "../page/perfCliente.html";
-            }
-        });
     }
 });

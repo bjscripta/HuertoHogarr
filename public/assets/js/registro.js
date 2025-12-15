@@ -17,28 +17,24 @@ if (!firebase.apps.length) {
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// ========== FUNCIONES DE VALIDACIÓN SIMPLIFICADAS ==========
+// ========== FUNCIONES DE VALIDACIÓN ==========
 
-// Función SIMPLIFICADA para validar RUN - solo formato, no algoritmo
+// Función SIMPLIFICADA para validar RUN
 function validarRun(run) {
-    // Eliminar espacios y convertir a mayúsculas
     run = run.trim().toUpperCase();
-    
-    // Verificar formato: 7-8 dígitos + guión + dígito/K
-    // Ejemplos válidos: 12345678-9, 1234567-8, 12345678-K
     const regex = /^\d{7,8}-[\dkK]$/;
     return regex.test(run);
 }
 
 // Función para validar correo electrónico
 function validarCorreo(correo) {
-    const dominiosPermitidos = ['@duoc.cl', '@profesor.duoc.cl', '@gmail.com'];
-    return dominiosPermitidos.some(dominio => correo.toLowerCase().endsWith(dominio));
+    const regex = /^[\w.+-]+@(duoc\.cl|profesor\.duoc\.cl|gmail\.com)$/i;
+    return regex.test(correo);
 }
 
 // Función para validar edad (18+ años) - OPCIONAL
 function esMayorEdad(fechaNacimiento) {
-    if (!fechaNacimiento) return true; // Si no hay fecha, es válido
+    if (!fechaNacimiento) return true;
     
     const hoy = new Date();
     const nacimiento = new Date(fechaNacimiento);
@@ -138,19 +134,29 @@ function verificarCoincidenciaContrasenas() {
     return false;
 }
 
-// Función para guardar usuario
+// ========== FUNCIÓN PRINCIPAL MEJORADA: guardarUsuario ==========
 async function guardarUsuario(userData) {
     try {
-        // 1. Crear usuario en Firebase Authentication
+        console.log('🔧 Creando usuario con datos:', {
+            correo: userData.correo,
+            nombre: userData.nombre,
+            apellido: userData.apellido
+        });
+        
+        // 1. CREAR USUARIO EN FIREBASE AUTHENTICATION
+        console.log('📝 Paso 1: Creando en Firebase Authentication...');
         const userCredential = await auth.createUserWithEmailAndPassword(
             userData.correo, 
             userData.clave
         );
         
-        const userId = userCredential.user.uid;
+        const user = userCredential.user;
+        const userId = user.uid;
+        console.log('✅ Usuario creado en Auth. UID:', userId);
         
-        // 2. Guardar datos en Firestore
-        const usuarioData = {
+        // 2. PREPARAR DATOS PARA FIRESTORE
+        const usuarioFirestore = {
+            uid: userId, // ¡IMPORTANTE! Guardar el UID de Auth
             run: userData.run,
             nombre: userData.nombre,
             apellido: userData.apellido,
@@ -161,17 +167,34 @@ async function guardarUsuario(userData) {
             comuna: userData.comuna,
             fecha: userData.fecha || '',
             fechaRegistro: new Date().toISOString(),
-            uid: userId,
-            rol: 'cliente',
-            createdAt: new Date(),
-            updatedAt: new Date()
+            rol: 'cliente', // TODOS los nuevos usuarios son 'cliente' por defecto
+            activo: true,
+            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
         };
         
-        await db.collection("usuario").add(usuarioData);
+        console.log('📝 Paso 2: Guardando en Firestore...', usuarioFirestore);
         
-        return { success: true, userId: userId };
+        // 3. GUARDAR EN FIRESTORE (colección 'usuario')
+        // IMPORTANTE: Usamos .doc(userId) para que el ID del documento sea el mismo UID
+        await db.collection("usuario").doc(userId).set(usuarioFirestore);
+        
+        console.log('✅ Usuario guardado en Firestore. Document ID:', userId);
+        
+        // 4. OPCIONAL: Actualizar el perfil en Auth
+        await user.updateProfile({
+            displayName: `${userData.nombre} ${userData.apellido}`
+        });
+        
+        return { 
+            success: true, 
+            userId: userId,
+            message: 'Usuario creado exitosamente en Auth y Firestore'
+        };
         
     } catch (error) {
+        console.error('❌ ERROR en guardarUsuario:', error);
+        
         let errorMessage = "Error al registrar el usuario";
         
         if (error.code === 'auth/email-already-in-use') {
@@ -180,17 +203,87 @@ async function guardarUsuario(userData) {
             errorMessage = "La contraseña debe tener al menos 6 caracteres";
         } else if (error.code === 'auth/invalid-email') {
             errorMessage = "El correo electrónico no es válido";
+        } else if (error.code === 'permission-denied') {
+            errorMessage = "Error de permisos en Firestore. Verifica las reglas.";
+        } else if (error.code === 'firestore/unavailable') {
+            errorMessage = "Firestore no está disponible. Revisa tu conexión.";
         } else {
             errorMessage = `Error: ${error.message}`;
         }
         
-        return { success: false, error: errorMessage };
+        // Si falló después de crear en Auth, intentar eliminar el usuario de Auth
+        if (auth.currentUser) {
+            try {
+                await auth.currentUser.delete();
+                console.log('Usuario eliminado de Auth debido a error en Firestore');
+            } catch (deleteError) {
+                console.error('Error eliminando usuario de Auth:', deleteError);
+            }
+        }
+        
+        return { 
+            success: false, 
+            error: errorMessage,
+            errorCode: error.code
+        };
+    }
+}
+
+// ========== FUNCIÓN ADICIONAL: Crear usuario Admin manualmente ==========
+async function crearUsuarioAdminManual() {
+    if (confirm('¿Crear usuario admin@duoc.cl manualmente?')) {
+        try {
+            const correoAdmin = 'admin@duoc.cl';
+            const claveAdmin = 'admin123'; // Cambia esto por una contraseña segura
+            
+            console.log('🛠 Creando usuario admin manualmente...');
+            
+            // 1. Crear en Auth
+            const userCredential = await auth.createUserWithEmailAndPassword(correoAdmin, claveAdmin);
+            const userId = userCredential.user.uid;
+            
+            // 2. Crear en Firestore
+            const adminData = {
+                uid: userId,
+                run: '11111111-1',
+                nombre: 'Administrador',
+                apellido: 'Sistema',
+                correo: correoAdmin,
+                telefono: '+56 9 1234 5678',
+                direccion: 'Oficina Central',
+                region: 'metropolitana',
+                comuna: 'santiago',
+                fecha: '1990-01-01',
+                fechaRegistro: new Date().toISOString(),
+                rol: 'admin', // ¡ROL DE ADMINISTRADOR!
+                activo: true,
+                createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            
+            await db.collection("usuario").doc(userId).set(adminData);
+            
+            alert(`✅ Usuario admin creado:
+Correo: ${correoAdmin}
+Contraseña: ${claveAdmin}
+UID: ${userId}
+
+⚠️ IMPORTANTE: Cambia la contraseña en tu primer inicio de sesión.`);
+            
+            console.log('Usuario admin creado:', adminData);
+            
+        } catch (error) {
+            console.error('Error creando admin:', error);
+            alert('Error creando admin: ' + error.message);
+        }
     }
 }
 
 // ========== INICIALIZACIÓN ==========
 
 document.addEventListener("DOMContentLoaded", function() {
+    console.log('🚀 DOM cargado. Inicializando registro...');
+    
     const form = document.getElementById("formRegistro");
     
     if (!form) {
@@ -244,6 +337,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // Evento de envío del formulario
     form.addEventListener("submit", async function(e) {
         e.preventDefault();
+        console.log('📋 Formulario enviado...');
         
         // Limpiar mensajes
         mensajeElement.textContent = '';
@@ -262,64 +356,56 @@ document.addEventListener("DOMContentLoaded", function() {
         const telefono = document.getElementById('telefono').value.trim();
         const fecha = document.getElementById('fechaNacimiento').value;
         
+        console.log('📊 Validando datos...', { correo, nombre, apellido, region });
+        
         // Validaciones
         if (!validarRun(run)) {
-            mensajeElement.textContent = 'RUN inválido. Formato: 12345678-9 (8 dígitos + guión + dígito/K)';
-            mensajeElement.className = 'alert alert-danger';
+            mostrarError('RUN inválido. Formato: 12345678-9 (8 dígitos + guión + dígito/K)');
             return;
         }
         
         if (!nombre) {
-            mensajeElement.textContent = 'El nombre es obligatorio';
-            mensajeElement.className = 'alert alert-danger';
+            mostrarError('El nombre es obligatorio');
             return;
         }
         
         if (!apellido) {
-            mensajeElement.textContent = 'El apellido es obligatorio';
-            mensajeElement.className = 'alert alert-danger';
+            mostrarError('El apellido es obligatorio');
             return;
         }
         
         if (!validarCorreo(correo)) {
-            mensajeElement.textContent = 'Correo inválido. Debe ser @duoc.cl, @profesor.duoc.cl o @gmail.com';
-            mensajeElement.className = 'alert alert-danger';
+            mostrarError('Correo inválido. Debe ser @duoc.cl, @profesor.duoc.cl o @gmail.com');
             return;
         }
         
         if (!contrasena || contrasena.length < 6) {
-            mensajeElement.textContent = 'La contraseña debe tener al menos 6 caracteres';
-            mensajeElement.className = 'alert alert-danger';
+            mostrarError('La contraseña debe tener al menos 6 caracteres');
             return;
         }
         
         if (contrasena !== confirmarContrasena) {
-            mensajeElement.textContent = 'Las contraseñas no coinciden';
-            mensajeElement.className = 'alert alert-danger';
+            mostrarError('Las contraseñas no coinciden');
             return;
         }
         
         if (!direccion) {
-            mensajeElement.textContent = 'La dirección es obligatoria';
-            mensajeElement.className = 'alert alert-danger';
+            mostrarError('La dirección es obligatoria');
             return;
         }
         
         if (!region) {
-            mensajeElement.textContent = 'Debe seleccionar una región';
-            mensajeElement.className = 'alert alert-danger';
+            mostrarError('Debe seleccionar una región');
             return;
         }
         
         if (!comuna) {
-            mensajeElement.textContent = 'Debe seleccionar una comuna';
-            mensajeElement.className = 'alert alert-danger';
+            mostrarError('Debe seleccionar una comuna');
             return;
         }
         
         if (fecha && !esMayorEdad(fecha)) {
-            mensajeElement.textContent = 'Debe ser mayor de 18 años';
-            mensajeElement.className = 'alert alert-danger';
+            mostrarError('Debe ser mayor de 18 años');
             return;
         }
         
@@ -329,8 +415,7 @@ document.addEventListener("DOMContentLoaded", function() {
         submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Registrando...';
         submitBtn.disabled = true;
         
-        mensajeElement.textContent = 'Registrando usuario...';
-        mensajeElement.className = 'alert alert-info';
+        mostrarInfo('Registrando usuario en el sistema...');
         
         // Datos para guardar
         const userData = {
@@ -343,16 +428,16 @@ document.addEventListener("DOMContentLoaded", function() {
             region: region,
             comuna: comuna,
             telefono: telefono || '',
-            fecha: fecha || '',
-            fechaRegistro: new Date().toISOString()
+            fecha: fecha || ''
         };
         
         // Guardar usuario
+        console.log('🔄 Llamando a guardarUsuario...');
         const resultado = await guardarUsuario(userData);
         
         if (resultado.success) {
-            mensajeElement.textContent = '✓ Usuario registrado correctamente. Redirigiendo...';
-            mensajeElement.className = 'alert alert-success';
+            console.log('✅ Registro exitoso. Redirigiendo...');
+            mostrarExito('✓ Usuario registrado correctamente. Redirigiendo...');
             
             // Redirigir después de 2 segundos
             setTimeout(() => {
@@ -360,10 +445,33 @@ document.addEventListener("DOMContentLoaded", function() {
             }, 2000);
             
         } else {
-            mensajeElement.textContent = resultado.error;
-            mensajeElement.className = 'alert alert-danger';
+            console.error('❌ Error en registro:', resultado.error);
+            mostrarError(`Error: ${resultado.error} ${resultado.errorCode ? `(Código: ${resultado.errorCode})` : ''}`);
             submitBtn.innerHTML = originalText;
             submitBtn.disabled = false;
         }
     });
+    
+    // Función auxiliar para mostrar mensajes
+    function mostrarError(mensaje) {
+        mensajeElement.textContent = mensaje;
+        mensajeElement.className = 'mt-3 alert alert-danger';
+        console.error('❌ Error:', mensaje);
+    }
+    
+    function mostrarExito(mensaje) {
+        mensajeElement.textContent = mensaje;
+        mensajeElement.className = 'mt-3 alert alert-success';
+        console.log('✅ Éxito:', mensaje);
+    }
+    
+    function mostrarInfo(mensaje) {
+        mensajeElement.textContent = mensaje;
+        mensajeElement.className = 'mt-3 alert alert-info';
+        console.log('ℹ️ Info:', mensaje);
+    }
+    
 });
+
+// Verificar que Firebase esté funcionando
+console.log('🔥 Firebase inicializado:', firebase.apps.length > 0 ? 'SÍ' : 'NO');
