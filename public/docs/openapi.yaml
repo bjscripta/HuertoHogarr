@@ -1,56 +1,32 @@
 openapi: 3.0.0
 info:
-  title: API Panel de Administración - Tienda Online
-  description: Documentación de servicios Firebase Firestore - Los ejemplos son estáticos
+  title: API Panel de Administración - Huerto Hogar
+  description: API para gestión de productos, usuarios y compras
   version: 1.0.0
   contact:
-    name: Soporte Técnico
-    email: soporte@tiendaonline.com
+    name: Soporte Huerto Hogar
+    email: soporte@huertohogar.com
 
 servers:
   - url: https://firestore.googleapis.com/v1
     description: Firebase Firestore API
 
 tags:
-  - name: Dashboard
-    description: Operaciones del panel de control
   - name: Productos
-    description: Gestión de productos
-  - name: Órdenes
-    description: Gestión de órdenes de compra
+    description: Gestión completa de productos (CRUD)
   - name: Usuarios
-    description: Gestión de usuarios
-  - name: Categorías
-    description: Gestión de categorías
+    description: Gestión de usuarios registrados
+  - name: Compras
+    description: Gestión de órdenes de compra
 
 paths:
-  /api/dashboard/estadisticas:
-    get:
-      tags:
-        - Dashboard
-      summary: Obtener estadísticas del dashboard
-      description: Servicio Firebase - DashboardService.getEstadisticasCompletas()
-      responses:
-        '200':
-          description: Estadísticas obtenidas correctamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/EstadisticasDashboard'
-              example:
-                totalCompras: 24
-                proyeccionCompras: 15
-                totalProductos: 156
-                inventarioTotal: 1248
-                totalUsuarios: 89
-                nuevosUsuariosMes: 12
-
+  # ==================== PRODUCTOS ====================
   /api/productos:
     get:
       tags:
         - Productos
-      summary: Obtener lista de productos
-      description: Servicio Firebase - CrudService.getProductos()
+      summary: Obtener todos los productos
+      description: Obtiene la lista completa de productos disponibles
       responses:
         '200':
           description: Lista de productos obtenida correctamente
@@ -61,32 +37,21 @@ paths:
                 items:
                   $ref: '#/components/schemas/Producto'
               example:
-                - id: "prod123"
-                  nombre: "Laptop Gaming"
-                  precio: 1299.99
-                  stock: 15
-                  categoria: "Tecnología"
-                  imagen: "https://ejemplo.com/laptop.jpg"
-                  activo: true
-                - id: "prod456"
-                  nombre: "Mouse Inalámbrico"
-                  precio: 49.99
-                  stock: 30
-                  categoria: "Accesorios"
-                  imagen: "https://ejemplo.com/mouse.jpg"
-                  activo: true
-                - id: "prod789"
-                  nombre: "Teclado Mecánico"
-                  precio: 89.99
-                  stock: 25
-                  categoria: "Accesorios"
+                - id: "6MJVVRYOBmHyXEvVdUab"
+                  nombre: "Naranjas Valencia"
+                  precio: 1000
+                  stock: 175
+                  categoria: "Frutas frescas"
+                  imagen: "https://huertohogar-15d5.web.app/assets/mg/productos/naranjasValencia.png"
+                  descripcion: "Jugosas y ricas en vitamina C..."
+                  unidad: "kilo"
                   activo: true
 
     post:
       tags:
         - Productos
       summary: Crear un nuevo producto
-      description: Servicio Firebase - CrudService.createProducto()
+      description: Agrega un nuevo producto al inventario
       requestBody:
         required: true
         content:
@@ -94,11 +59,13 @@ paths:
             schema:
               $ref: '#/components/schemas/ProductoInput'
             example:
-              nombre: "Tablet Android 10''"
-              precio: 299.99
-              stock: 25
-              categoria: "Tecnología"
-              imagen: "https://ejemplo.com/tablet.jpg"
+              nombre: "Manzanas Fuji"
+              precio: 1200
+              stock: 200
+              categoria: "Frutas frescas"
+              imagen: "https://ejemplo.com/manzanas.jpg"
+              descripcion: "Manzanas crujientes y dulces"
+              unidad: "kilo"
       responses:
         '201':
           description: Producto creado correctamente
@@ -109,22 +76,30 @@ paths:
                 properties:
                   id:
                     type: string
+                    description: ID del producto creado
               example:
-                id: "nuevoIdGeneradoPorFirestore123"
+                id: "nuevoIdProducto123"
+        '400':
+          description: Datos inválidos
+          content:
+            application/json:
+              example:
+                error: "Datos incompletos"
+                message: "Nombre, precio y stock son obligatorios"
 
   /api/productos/{id}:
     get:
       tags:
         - Productos
       summary: Obtener producto por ID
-      description: Servicio Firebase - CrudService.getProductoById()
+      description: Obtiene los detalles de un producto específico
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
-          example: "prod123"
+          example: "6MJVVRYOBmHyXEvVdUab"
       responses:
         '200':
           description: Producto encontrado
@@ -133,12 +108,14 @@ paths:
               schema:
                 $ref: '#/components/schemas/Producto'
               example:
-                id: "prod123"
-                nombre: "Laptop Gaming"
-                precio: 1299.99
-                stock: 15
-                categoria: "Tecnología"
-                imagen: "https://ejemplo.com/laptop.jpg"
+                id: "6MJVVRYOBmHyXEvVdUab"
+                nombre: "Naranjas Valencia"
+                precio: 1000
+                stock: 175
+                categoria: "Frutas frescas"
+                imagen: "https://huertohogar-15d5.web.app/assets/mg/productos/naranjasValencia.png"
+                descripcion: "Jugosas y ricas en vitamina C..."
+                unidad: "kilo"
                 activo: true
         '404':
           description: Producto no encontrado
@@ -146,20 +123,20 @@ paths:
             application/json:
               example:
                 error: "Producto no encontrado"
-                message: "El producto con ID prod123 no existe"
+                message: "El producto con ID 6MJVVRYOBmHyXEvVdUab no existe"
 
     put:
       tags:
         - Productos
       summary: Actualizar producto existente
-      description: Servicio Firebase - CrudService.updateProducto()
+      description: Actualiza la información de un producto
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
-          example: "prod123"
+          example: "6MJVVRYOBmHyXEvVdUab"
       requestBody:
         required: true
         content:
@@ -167,10 +144,11 @@ paths:
             schema:
               $ref: '#/components/schemas/ProductoInput'
             example:
-              nombre: "Laptop Gaming Pro"
-              precio: 1399.99
-              stock: 10
-              categoria: "Tecnología Premium"
+              nombre: "Naranjas Valencia Premium"
+              precio: 1200
+              stock: 150
+              categoria: "Frutas frescas premium"
+              descripcion: "Naranjas de la más alta calidad"
       responses:
         '200':
           description: Producto actualizado correctamente
@@ -186,14 +164,14 @@ paths:
       tags:
         - Productos
       summary: Eliminar producto del sistema
-      description: Servicio Firebase - CrudService.deleteProducto()
+      description: Elimina un producto permanentemente
       parameters:
         - name: id
           in: path
           required: true
           schema:
             type: string
-          example: "prod123"
+          example: "6MJVVRYOBmHyXEvVdUab"
       responses:
         '200':
           description: Producto eliminado correctamente
@@ -205,127 +183,13 @@ paths:
         '404':
           description: Producto no encontrado
 
-  /api/ordenes:
-    get:
-      tags:
-        - Órdenes
-      summary: Obtener lista de órdenes
-      description: Servicio Firebase - CrudService.getOrdenes()
-      responses:
-        '200':
-          description: Lista de órdenes obtenida correctamente
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Orden'
-              example:
-                - id: "orden123"
-                  clienteNombre: "Juan Pérez"
-                  total: 199.99
-                  estado: "completado"
-                  fecha: "2024-01-15T10:30:00Z"
-                  productos:
-                    - id: "prod123"
-                      nombre: "Laptop Gaming"
-                      cantidad: 1
-                      precio: 1299.99
-                    - id: "prod456"
-                      nombre: "Mouse Inalámbrico"
-                      cantidad: 1
-                      precio: 49.99
-                - id: "orden124"
-                  clienteNombre: "María García"
-                  total: 299.99
-                  estado: "procesando"
-                  fecha: "2024-01-14T15:45:00Z"
-                  productos:
-                    - id: "prod789"
-                      nombre: "Teclado Mecánico"
-                      cantidad: 2
-                      precio: 89.99
-
-  /api/ordenes/{id}:
-    get:
-      tags:
-        - Órdenes
-      summary: Obtener orden por ID
-      description: Servicio Firebase - CrudService.getOrdenById()
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          example: "orden123"
-      responses:
-        '200':
-          description: Orden encontrada
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Orden'
-              example:
-                id: "orden123"
-                clienteNombre: "Juan Pérez"
-                total: 199.99
-                estado: "completado"
-                fecha: "2024-01-15T10:30:00Z"
-                productos:
-                  - id: "prod123"
-                    nombre: "Laptop Gaming"
-                    cantidad: 1
-                    precio: 1299.99
-                  - id: "prod456"
-                    nombre: "Mouse Inalámbrico"
-                    cantidad: 1
-                    precio: 49.99
-        '404':
-          description: Orden no encontrada
-
-  /api/ordenes/{id}/estado:
-    put:
-      tags:
-        - Órdenes
-      summary: Actualizar estado de orden
-      description: Servicio Firebase - CrudService.updateOrdenEstado()
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-          example: "orden123"
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                estado:
-                  type: string
-                  enum: [pendiente, procesando, completado, cancelado]
-            example:
-              estado: "completado"
-      responses:
-        '200':
-          description: Estado actualizado correctamente
-          content:
-            application/json:
-              example:
-                success: true
-                message: "Estado actualizado a completado"
-        '404':
-          description: Orden no encontrada
-
+  # ==================== USUARIOS ====================
   /api/usuarios:
     get:
       tags:
         - Usuarios
-      summary: Obtener lista de usuarios
-      description: Servicio Firebase - CrudService.getUsuarios()
+      summary: Obtener todos los usuarios
+      description: Obtiene la lista de usuarios registrados
       responses:
         '200':
           description: Lista de usuarios obtenida correctamente
@@ -337,30 +201,23 @@ paths:
                   $ref: '#/components/schemas/Usuario'
               example:
                 - id: "user123"
-                  nombre: "Ana López"
-                  email: "ana@ejemplo.com"
-                  rol: "admin"
-                  activo: true
-                  telefono: "+56912345678"
-                  direccion: "Av. Principal 123"
-                - id: "user124"
-                  nombre: "Carlos Ruiz"
-                  email: "carlos@ejemplo.com"
-                  rol: "cliente"
-                  activo: true
-                  telefono: "+56987654321"
-                - id: "user125"
-                  nombre: "María González"
-                  email: "maria@ejemplo.com"
-                  rol: "cliente"
-                  activo: false
+                  nombre: "benj"
+                  apellidos: "esteban"
+                  correo: "benj@duoc.cl"
+                  telefono: "+56986060719"
+                  run: "12345678-9"
+                  region: "Metropolitana"
+                  comuna: "San Ramón"
+                  direccion: "la badera 951"
+                  uid: "firebaseUid123"
+                  fecha: "2025-11-04T11:46:43Z"
 
   /api/usuarios/{id}:
     get:
       tags:
         - Usuarios
       summary: Obtener usuario por ID
-      description: Servicio Firebase - CrudService.getUsuarioById()
+      description: Obtiene los detalles de un usuario específico
       parameters:
         - name: id
           in: path
@@ -377,91 +234,177 @@ paths:
                 $ref: '#/components/schemas/Usuario'
               example:
                 id: "user123"
-                nombre: "Ana López"
-                email: "ana@ejemplo.com"
-                rol: "admin"
-                activo: true
-                telefono: "+56912345678"
-                direccion: "Av. Principal 123"
-                createdAt: "2024-01-01T00:00:00Z"
+                nombre: "benj"
+                apellidos: "esteban"
+                correo: "benj@duoc.cl"
+                telefono: "+56986060719"
+                run: "12345678-9"
+                region: "Metropolitana"
+                comuna: "San Ramón"
+                direccion: "la badera 951"
+                uid: "firebaseUid123"
+                fecha: "2025-11-04T11:46:43Z"
         '404':
           description: Usuario no encontrado
+          content:
+            application/json:
+              example:
+                error: "Usuario no encontrado"
+                message: "El usuario con ID user123 no existe"
 
-  /api/categorias:
+  # ==================== COMPRAS ====================
+  /api/compras:
     get:
       tags:
-        - Categorías
-      summary: Obtener lista de categorías
-      description: Servicio Firebase - CrudService.getCategorias()
+        - Compras
+      summary: Obtener todas las compras
+      description: Obtiene la lista completa de órdenes de compra
       responses:
         '200':
-          description: Lista de categorías obtenida correctamente
+          description: Lista de compras obtenida correctamente
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Categoria'
+                  $ref: '#/components/schemas/Compra'
               example:
-                - id: "cat123"
-                  nombre: "Electrónicos"
-                  descripcion: "Dispositivos electrónicos y tecnológicos"
-                  productosCount: 45
-                  activa: true
-                - id: "cat124"
-                  nombre: "Hogar"
-                  descripcion: "Productos para el hogar"
-                  productosCount: 32
-                  activa: true
-                - id: "cat125"
-                  nombre: "Ropa"
-                  descripcion: "Ropa y accesorios"
-                  productosCount: 28
-                  activa: false
+                - id: "compra123"
+                  numeroOrden: "HH1762256803873921"
+                  fecha: "2025-11-04T11:46:43Z"
+                  estado: "error_pego"
+                  cliente:
+                    nombre: "benj"
+                    apellidos: "esteban"
+                    correo: "benj@duoc.cl"
+                    telefono: "+56986060719"
+                    direccion:
+                      calle: "la badera"
+                      comuna: "San Ramón"
+                      departamento: "951"
+                      region: "Metropolitana"
+                      indicaciones: ""
+                  productos:
+                    - id: "6MJVVRYOBmHyXEvVdUab"
+                      nombre: "Naranjas Valencia"
+                      cantidad: 1
+                      precio: 1000
+                      categoria: "Frutas Frescas"
+                      descripcion: "Jugosas y ricas en vitamina C..."
+                      imagen: "https://huertohogar-15d5.web.app/assets/mg/productos/naranjasValencia.png"
+
+  /api/compras/{id}:
+    get:
+      tags:
+        - Compras
+      summary: Obtener compra por ID
+      description: Obtiene los detalles de una compra específica
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "compra123"
+      responses:
+        '200':
+          description: Compra encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Compra'
+              example:
+                id: "compra123"
+                numeroOrden: "HH1762256803873921"
+                fecha: "2025-11-04T11:46:43Z"
+                estado: "error_pego"
+                cliente:
+                  nombre: "benj"
+                  apellidos: "esteban"
+                  correo: "benj@duoc.cl"
+                  telefono: "+56986060719"
+                  direccion:
+                    calle: "la badera"
+                    comuna: "San Ramón"
+                    departamento: "951"
+                    region: "Metropolitana"
+                    indicaciones: ""
+                productos:
+                  - id: "6MJVVRYOBmHyXEvVdUab"
+                    nombre: "Naranjas Valencia"
+                    cantidad: 1
+                    precio: 1000
+                    categoria: "Frutas Frescas"
+                    descripcion: "Jugosas y ricas en vitamina C..."
+                    imagen: "https://huertohogar-15d5.web.app/assets/mg/productos/naranjasValencia.png"
+        '404':
+          description: Compra no encontrada
+
+  /api/compras/{id}/estado:
+    put:
+      tags:
+        - Compras
+      summary: Actualizar estado de compra
+      description: 
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: "compra123"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                estado:
+                  type: string
+                  description: Nuevo estado de la compra
+            example:
+              estado: "completado"
+      responses:
+        '200':
+          description: Estado actualizado correctamente
+          content:
+            application/json:
+              example:
+                success: true
+                message: "Estado actualizado a completado"
+        '404':
+          description: Compra no encontrada
 
 components:
   schemas:
-    EstadisticasDashboard:
-      type: object
-      properties:
-        totalCompras:
-          type: integer
-          example: 24
-        proyeccionCompras:
-          type: integer
-          example: 15
-        totalProductos:
-          type: integer
-          example: 156
-        inventarioTotal:
-          type: integer
-          example: 1248
-        totalUsuarios:
-          type: integer
-          example: 89
-        nuevosUsuariosMes:
-          type: integer
-          example: 12
-
     Producto:
       type: object
       properties:
         id:
           type: string
+          description: ID único del producto
         nombre:
           type: string
-          example: "Laptop Gaming"
+          example: "Naranjas Valencia"
         precio:
           type: number
-          example: 1299.99
+          example: 1000
         stock:
           type: integer
-          example: 15
+          example: 175
         categoria:
           type: string
-          example: "Tecnología"
+          example: "Frutas frescas"
         imagen:
           type: string
+          example: "https://huertohogar-15d5.web.app/assets/mg/productos/naranjasValencia.png"
+        descripcion:
+          type: string
+          example: "Jugosas y ricas en vitamina C..."
+        unidad:
+          type: string
+          example: "kilo"
         activo:
           type: boolean
           example: true
@@ -475,29 +418,105 @@ components:
       properties:
         nombre:
           type: string
+          description: Nombre del producto
         precio:
           type: number
+          description: Precio del producto
         stock:
           type: integer
+          description: Cantidad en stock
         categoria:
           type: string
+          description: Categoría del producto
         imagen:
           type: string
+          description: URL de la imagen
+        descripcion:
+          type: string
+          description: Descripción detallada
+        unidad:
+          type: string
+          description: Unidad de medida (kilo, unidad, etc.)
 
-    Orden:
+    Usuario:
       type: object
       properties:
         id:
           type: string
-        clienteNombre:
+          description: ID único del usuario
+        nombre:
           type: string
-        total:
-          type: number
-        estado:
+          example: "benj"
+        apellidos:
           type: string
+          example: "esteban"
+        correo:
+          type: string
+          format: email
+          example: "benj@duoc.cl"
+        telefono:
+          type: string
+          example: "+56986060719"
+        run:
+          type: string
+          example: "12345678-9"
+        region:
+          type: string
+          example: "Metropolitana"
+        comuna:
+          type: string
+          example: "San Ramón"
+        direccion:
+          type: string
+          example: "la badera 951"
+        uid:
+          type: string
+          description: Firebase UID
         fecha:
           type: string
           format: date-time
+          description: Fecha de registro
+
+    Compra:
+      type: object
+      properties:
+        id:
+          type: string
+          description: ID único de la compra
+        numeroOrden:
+          type: string
+          example: "HH1762256803873921"
+        fecha:
+          type: string
+          format: date-time
+        estado:
+          type: string
+          example: "error_pego"
+        cliente:
+          type: object
+          properties:
+            nombre:
+              type: string
+            apellidos:
+              type: string
+            correo:
+              type: string
+              format: email
+            telefono:
+              type: string
+            direccion:
+              type: object
+              properties:
+                calle:
+                  type: string
+                comuna:
+                  type: string
+                departamento:
+                  type: string
+                region:
+                  type: string
+                indicaciones:
+                  type: string
         productos:
           type: array
           items:
@@ -511,38 +530,9 @@ components:
                 type: integer
               precio:
                 type: number
-
-    Usuario:
-      type: object
-      properties:
-        id:
-          type: string
-        nombre:
-          type: string
-        email:
-          type: string
-        rol:
-          type: string
-        activo:
-          type: boolean
-        telefono:
-          type: string
-        direccion:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
-
-    Categoria:
-      type: object
-      properties:
-        id:
-          type: string
-        nombre:
-          type: string
-        descripcion:
-          type: string
-        productosCount:
-          type: integer
-        activa:
-          type: boolean
+              categoria:
+                type: string
+              descripcion:
+                type: string
+              imagen:
+                type: string

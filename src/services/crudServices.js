@@ -15,52 +15,57 @@ import {
 
 export class CrudService {
   
-  // ==================== ÓRDENES ====================
-  static async getOrdenes() {
+  // ==================== COMPRAS ====================
+  static async getCompras() {
     try {
-      const ordenesRef = collection(db, "compras");
-      const q = query(ordenesRef, orderBy("fecha", "desc"));
+      const comprasRef = collection(db, "compras");
+      const q = query(comprasRef, orderBy("fecha", "desc"));
       const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        fecha: doc.data().fecha?.toDate?.() || doc.data().fecha
-      }));
+      
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          fecha: data.fecha?.toDate?.() || data.fecha
+        };
+      });
     } catch (error) {
-      console.error("Error obteniendo órdenes:", error);
+      console.error("Error obteniendo compras:", error);
       return [];
     }
   }
 
-  static async getOrdenById(id) {
+  static async getCompraById(id) {
     try {
-      const ordenRef = doc(db, "compras", id);
-      const ordenSnap = await getDoc(ordenRef);
-      if (ordenSnap.exists()) {
-        const data = ordenSnap.data();
+      const compraRef = doc(db, "compras", id);
+      const compraSnap = await getDoc(compraRef);
+      
+      if (compraSnap.exists()) {
+        const data = compraSnap.data();
         return { 
-          id: ordenSnap.id, 
+          id: compraSnap.id, 
           ...data,
           fecha: data.fecha?.toDate?.() || data.fecha
         };
       }
       return null;
     } catch (error) {
-      console.error("Error obteniendo orden:", error);
+      console.error("Error obteniendo compra:", error);
       return null;
     }
   }
 
-  static async updateOrdenEstado(id, nuevoEstado) {
+  static async updateCompraEstado(id, nuevoEstado) {
     try {
-      const ordenRef = doc(db, "compras", id);
-      await updateDoc(ordenRef, {
+      const compraRef = doc(db, "compras", id);
+      await updateDoc(compraRef, {
         estado: nuevoEstado,
         updatedAt: Timestamp.now()
       });
       return true;
     } catch (error) {
-      console.error("Error actualizando orden:", error);
+      console.error("Error actualizando estado de compra:", error);
       return false;
     }
   }
@@ -70,6 +75,7 @@ export class CrudService {
     try {
       const productosRef = collection(db, "producto");
       const querySnapshot = await getDocs(productosRef);
+      
       return querySnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data()
@@ -84,6 +90,7 @@ export class CrudService {
     try {
       const productoRef = doc(db, "producto", id);
       const productSnap = await getDoc(productoRef);
+      
       if (productSnap.exists()) {
         return { id: productSnap.id, ...productSnap.data() };
       }
@@ -98,6 +105,13 @@ export class CrudService {
     try {
       const docRef = await addDoc(collection(db, "producto"), {
         ...producto,
+        nombre: producto.nombre || "",
+        precio: parseFloat(producto.precio) || 0,
+        stock: parseInt(producto.stock) || 0,
+        categoria: producto.categoria || "",
+        descripcion: producto.descripcion || "",
+        imagen: producto.imagen || "",
+        unidad: producto.unidad || "unidad",
         createdAt: Timestamp.now(),
         activo: true
       });
@@ -111,10 +125,16 @@ export class CrudService {
   static async updateProducto(id, datos) {
     try {
       const productoRef = doc(db, "producto", id);
-      await updateDoc(productoRef, {
+      
+      // Asegurar tipos correctos
+      const datosActualizados = {
         ...datos,
+        precio: datos.precio !== undefined ? parseFloat(datos.precio) : undefined,
+        stock: datos.stock !== undefined ? parseInt(datos.stock) : undefined,
         updatedAt: Timestamp.now()
-      });
+      };
+      
+      await updateDoc(productoRef, datosActualizados);
       return true;
     } catch (error) {
       console.error("Error actualizando producto:", error);
@@ -132,69 +152,20 @@ export class CrudService {
     }
   }
 
-  // ==================== CATEGORÍAS ====================
-  static async getCategorias() {
-    try {
-      const categoriasRef = collection(db, "categorias");
-      const querySnapshot = await getDocs(categoriasRef);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-    } catch (error) {
-      console.error("Error obteniendo categorías:", error);
-      return [];
-    }
-  }
-
-  static async createCategoria(categoria) {
-    try {
-      const docRef = await addDoc(collection(db, "categorias"), {
-        ...categoria,
-        createdAt: Timestamp.now(),
-        activa: true
-      });
-      return docRef.id;
-    } catch (error) {
-      console.error("Error creando categoría:", error);
-      return null;
-    }
-  }
-
-  static async updateCategoria(id, datos) {
-    try {
-      const categoriaRef = doc(db, "categorias", id);
-      await updateDoc(categoriaRef, {
-        ...datos,
-        updatedAt: Timestamp.now()
-      });
-      return true;
-    } catch (error) {
-      console.error("Error actualizando categoría:", error);
-      return false;
-    }
-  }
-
-  static async deleteCategoria(id) {
-    try {
-      await deleteDoc(doc(db, "categorias", id));
-      return true;
-    } catch (error) {
-      console.error("Error eliminando categoría:", error);
-      return false;
-    }
-  }
-
   // ==================== USUARIOS ====================
   static async getUsuarios() {
     try {
       const usuariosRef = collection(db, "usuario");
       const querySnapshot = await getDocs(usuariosRef);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate?.() || doc.data().createdAt
-      }));
+      
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          fecha: data.fecha?.toDate?.() || data.fecha
+        };
+      });
     } catch (error) {
       console.error("Error obteniendo usuarios:", error);
       return [];
@@ -205,12 +176,13 @@ export class CrudService {
     try {
       const usuarioRef = doc(db, "usuario", id);
       const usuarioSnap = await getDoc(usuarioRef);
+      
       if (usuarioSnap.exists()) {
         const data = usuarioSnap.data();
         return { 
           id: usuarioSnap.id, 
           ...data,
-          createdAt: data.createdAt?.toDate?.() || data.createdAt
+          fecha: data.fecha?.toDate?.() || data.fecha
         };
       }
       return null;
@@ -245,11 +217,15 @@ export class CrudService {
         orderBy("fecha", "desc")
       );
       const querySnapshot = await getDocs(q);
-      return querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        fecha: doc.data().fecha?.toDate?.() || doc.data().fecha
-      }));
+      
+      return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          ...data,
+          fecha: data.fecha?.toDate?.() || data.fecha
+        };
+      });
     } catch (error) {
       console.error("Error obteniendo reporte de ventas:", error);
       return [];
@@ -258,22 +234,29 @@ export class CrudService {
 
   static async getProductosMasVendidos() {
     try {
-      // Esta es una implementación básica - puedes mejorarla según tus necesidades
       const comprasRef = collection(db, "compras");
       const querySnapshot = await getDocs(comprasRef);
       
       const productosVendidos = {};
+      
       querySnapshot.forEach(doc => {
         const compra = doc.data();
-        if (compra.productos) {
+        if (compra.productos && Array.isArray(compra.productos)) {
           compra.productos.forEach(producto => {
-            if (productosVendidos[producto.id]) {
-              productosVendidos[producto.id].cantidad += producto.cantidad;
-            } else {
-              productosVendidos[producto.id] = {
-                ...producto,
-                cantidad: producto.cantidad
-              };
+            if (producto.id) {
+              if (productosVendidos[producto.id]) {
+                productosVendidos[producto.id].cantidad += producto.cantidad || 1;
+                productosVendidos[producto.id].total += (producto.precio || 0) * (producto.cantidad || 1);
+              } else {
+                productosVendidos[producto.id] = {
+                  id: producto.id,
+                  nombre: producto.nombre || "Producto sin nombre",
+                  cantidad: producto.cantidad || 1,
+                  precio: producto.precio || 0,
+                  total: (producto.precio || 0) * (producto.cantidad || 1),
+                  categoria: producto.categoria || ""
+                };
+              }
             }
           });
         }
@@ -285,6 +268,56 @@ export class CrudService {
     } catch (error) {
       console.error("Error obteniendo productos más vendidos:", error);
       return [];
+    }
+  }
+
+  // ==================== DASHBOARD ====================
+  static async getEstadisticasDashboard() {
+    try {
+      const [compras, productos, usuarios] = await Promise.all([
+        this.getCompras(),
+        this.getProductos(),
+        this.getUsuarios()
+      ]);
+
+      // Calcular inventario total
+      const inventarioTotal = productos.reduce((total, producto) => {
+        return total + (parseInt(producto.stock) || 0);
+      }, 0);
+
+      // Compras del último mes
+      const unMesAtras = new Date();
+      unMesAtras.setMonth(unMesAtras.getMonth() - 1);
+      
+      const comprasUltimoMes = compras.filter(compra => {
+        const fechaCompra = compra.fecha instanceof Date ? compra.fecha : new Date(compra.fecha);
+        return fechaCompra >= unMesAtras;
+      }).length;
+
+      // Usuarios nuevos del último mes
+      const usuariosNuevosMes = usuarios.filter(usuario => {
+        const fechaRegistro = usuario.fecha instanceof Date ? usuario.fecha : new Date(usuario.fecha);
+        return fechaRegistro >= unMesAtras;
+      }).length;
+
+      return {
+        totalCompras: compras.length,
+        proyeccionCompras: comprasUltimoMes,
+        totalProductos: productos.length,
+        inventarioTotal: inventarioTotal,
+        totalUsuarios: usuarios.length,
+        nuevosUsuariosMes: usuariosNuevosMes
+      };
+    } catch (error) {
+      console.error("Error obteniendo estadísticas:", error);
+      return {
+        totalCompras: 0,
+        proyeccionCompras: 0,
+        totalProductos: 0,
+        inventarioTotal: 0,
+        totalUsuarios: 0,
+        nuevosUsuariosMes: 0
+      };
     }
   }
 }
